@@ -1,7 +1,16 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe "RubyDovado" do
-  it "fails" do
-    fail "hey buddy, you should probably rename this file and start specing for real"
+describe Dovado::Router do
+  @router = nil
+  
+  it "connects to a given router" do
+    @router = Dovado::Router.new(address: '10.0.1.1')
+    @router.connect.should be true
+    @router.disconnect.should be true
+  end
+  
+  it "checks the router for info" do
+    @router = Dovado::Router.new(address: '10.0.1.1')
+    puts @router.info.inspect
   end
 end

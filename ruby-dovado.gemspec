@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.authors = ["Jan Lindblom"]
   s.date = "2014-07-22"
-  s.description = "TODO: longer description of your gem"
+  s.description = "Ruby library for interfacing Dovado routers."
   s.email = "jan@janlindblom.se"
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -23,15 +23,20 @@ Gem::Specification.new do |s|
     ".rspec",
     "Gemfile",
     "LICENSE.txt",
+    "README.md",
     "Rakefile",
     "VERSION",
+    "lib/dovado.rb",
+    "lib/dovado/client.rb",
+    "lib/dovado/router.rb",
+    "ruby-dovado.gemspec",
     "spec/ruby-dovado_spec.rb",
     "spec/spec_helper.rb"
   ]
-  s.homepage = "http://github.com/janlindblom/ruby-dovado"
+  s.homepage = "https://bitbucket.org/lilycode/ruby-dovado"
   s.licenses = ["MIT"]
   s.rubygems_version = "2.3.0"
-  s.summary = "TODO: one-line summary of your gem"
+  s.summary = "Ruby library for interfacing Dovado routers."
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
