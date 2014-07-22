@@ -13,15 +13,13 @@ require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "ruby-dovado"
-  gem.homepage = "http://github.com/janlindblom/ruby-dovado"
+  gem.homepage = "https://bitbucket.org/lilycode/ruby-dovado"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = "Ruby library for interfacing Dovado routers."
+  gem.description = "Ruby library for interfacing Dovado routers."
   gem.email = "jan@janlindblom.se"
   gem.authors = ["Jan Lindblom"]
-  # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
 
