@@ -14,3 +14,10 @@ describe Dovado::Router do
     puts @router.info.inspect
   end
 end
+
+describe Dovado::Router::Info::Operator::Telia do
+  it "has commands" do
+    operator = Dovado::Router::Info::Operator::Telia.new
+    puts operator.inspect
+  end
+end
