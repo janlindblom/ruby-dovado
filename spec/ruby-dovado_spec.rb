@@ -1,17 +1,32 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
+describe Dovado::Utilities do
+  it "converts strings to symbols" do
+    Dovado::Utilities.name_to_sym("key name with spaces").should eq :key_name_with_spaces
+  end
+end
+
 describe Dovado::Router do
   @router = nil
   
   it "connects to a given router" do
     @router = Dovado::Router.new(address: '10.0.1.1')
-    @router.connect.should be true
-    @router.disconnect.should be true
   end
   
   it "checks the router for info" do
     @router = Dovado::Router.new(address: '10.0.1.1')
+
     puts @router.info.inspect
+  end
+  
+  it "checks the router for services" do
+    @router = Dovado::Router.new(address: '10.0.1.1')
+    puts @router.services.inspect
+  end
+  
+  it "checks the router for sms" do
+    @router = Dovado::Router.new(address: '10.0.1.1')
+    puts @router.sms.inspect
   end
 end
 

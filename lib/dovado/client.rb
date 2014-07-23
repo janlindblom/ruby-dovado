@@ -2,68 +2,82 @@ require 'net/telnet'
 
 module Dovado
   class Client
-    @server = nil
+    include Celluloid
+    include Celluloid::Logger
+    
+    @@server = nil
+    @address = nil
     @user = nil
     @password = nil
-    @authenticated = nil
+    @@authenticated = nil
     
     def initialize(args=nil)
       # Defaults
-      @server   = '192.168.0.1'
+      @address   = '192.168.0.1'
       @user     = 'admin'
       @password = 'password'
-      @authenticated = false
       unless args.nil?
-        @server   = args[:server]   unless    args[:server].nil?
+        @address  = args[:server]   unless    args[:server].nil?
         @user     = args[:user]     unless      args[:user].nil?
         @password = args[:password] unless  args[:password].nil?
+      end
+      debug "Starting up #{self.class.to_s}..."
+    end
+    
+    def command(text=nil)
+      unless text.nil?
+        #connect
+        #authenticate
+    
+        res = @@server.puts(text)
+        res = @@server.waitfor(/>>\s/)
+        #disconnect
+        res
+      end
+    end
+    
+    def connect
+      if @@server.nil?
+        @@server = Net::Telnet.new('Host' => @address, 'Port' => 6435, 'Telnetmode' => false, 'Prompt' => />>\s/)
+      end
+    end
+    
+    def disconnect
+      unless @@server.nil?
+        @@server.close
+      end
+    end
+    
+    def connected?
+      unless @@server.nil?
+        true
+      else
+        false
       end
     end
     
     def authenticate
-      unless @server.nil?
-        user = @user unless @user.nil?
-        password = @password unless @password.nil?
+      unless @@server.nil?
+        unless authenticated?
+          user = @user unless @user.nil?
+          password = @password unless @password.nil?
         
-        @server.cmd("user #{user}")
-        @server.cmd("pass #{password}")
+          @@server.cmd("user #{user}")
+          @@server.waitfor(/>>\s/)
+          @@server.cmd("pass #{password}")
         
-        # TODO: verify authentication
-        @authenticated = true
+          # TODO: verify authentication
+          @@authenticated = true
+        else
+          @@authenticated = false
+        end
       else
-        @authenticated = false
+        @@authenticated = false
       end
-    end
-    
-    def command(text=nil)
-      return false if text.nil?
-      connect unless connected?
-      authenticate unless authenticated?
-      
-      res = @server.cmd(text)
-      res = @server.waitfor(/>>/)
-      return res
-    end
-    
-    def connect
-      @server = Net::Telnet::new('Host' => @server, 'Port' => 6435, 'Telnetmode' => false, 'Prompt' => />>/n)
-      return true if @server
-      return false
-    end
-    
-    def disconnect
-      unless @server.nil?
-        return @server.close
-      end
-      return false
-    end
-    
-    def connected?
-      not @server.nil?
     end
     
     def authenticated?
-      @authenticated
+      @@authenticated
     end
     
   end

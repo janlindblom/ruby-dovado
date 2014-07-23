@@ -1,34 +1,36 @@
 require 'date'
 require 'time'
-require 'ipaddr'
+require 'socket'
 
 module Dovado
   class Router
     class Info
+      include Celluloid
+      include Celluloid::Logger
+      
       @data = nil
       @up_to_date = false
     
       def initialize(args=nil)
         # Defaults
-        @data = {}
+        @data = ThreadSafe::Cache.new
         @data[:local_ip] = Addrinfo.ip '192.168.0.1'
         
         @up_to_date = false
         unless args.nil?
           @data = args
         end
+        debug "Starting up #{self.class.to_s}..."
       end
     
       def create_from_string data_string=nil
-        puts "Dovado::Router::Info#create_from_string parsing #{data_string.inspect}"
         data_array = data_string.split("\n")
-        puts "Dovado::Router::Info#create_from_string created array: #{data_array.inspect}"
         data_array.each do |data_entry|
           entry_array = data_entry.split('=')
           if entry_array.length == 2
             key = entry_array[0].downcase
             val = entry_array[1]
-            keysym = name_to_sym(key)
+            keysym = Dovado::Utilities.name_to_sym(key)
             case key
             when 'time'
               @data[:time] = Time.parse(val)
@@ -53,7 +55,10 @@ module Dovado
         end
         @up_to_date = true
       end
-    
+      
+      # Determine if this info object is valid.
+      #
+      # @return [Boolean] true or false.
       def valid?
         return @up_to_date
       end
@@ -191,16 +196,6 @@ module Dovado
     
       def connected_devices= connected_devices=nil
         @data[:connected_devices] = connected_devices
-      end
-      
-      private
-    
-      # Convert a key name to symbol.
-      # 
-      # @param name [String] the key name to convert.
-      # @return [Symbol] the key name converted to a symbol.
-      def name_to_sym(name=nil)
-        name.downcase.tr(' ', '_').to_sym
       end
 
     end

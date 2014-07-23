@@ -4,6 +4,9 @@ module Dovado
   class Router
     class Sms
       class Message
+        include Celluloid
+        include Celluloid::Logger
+        
         attr_reader :id, :body, :pdus, :from, :sent, :encoding
   
         @id = nil
@@ -22,10 +25,11 @@ module Dovado
             @sent = args[:sent] unless args[:sent].nil?
             @encoding = args[:encoding] unless args[:encoding].nil?
           end
+          debug "Starting up #{self.class.to_s}..."
         end
   
         def self.from_string string=nil
-          hash = {}
+          hash = ThreadSafe::Cache.new
           message_body = ""
           array = string.split("\n")
           array.each do |row|
@@ -47,7 +51,7 @@ module Dovado
               end
         
             end
-            unless row.downcase =~ "end of sms"
+            unless row.downcase =~ /end of sms/
               message_body += "#{row}\n"
             end
           end

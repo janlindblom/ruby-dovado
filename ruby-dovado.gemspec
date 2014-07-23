@@ -29,6 +29,12 @@ Gem::Specification.new do |s|
     "lib/dovado.rb",
     "lib/dovado/client.rb",
     "lib/dovado/router.rb",
+    "lib/dovado/router/info.rb",
+    "lib/dovado/router/info/operator.rb",
+    "lib/dovado/router/info/operator/telia.rb",
+    "lib/dovado/router/sms.rb",
+    "lib/dovado/router/sms/message.rb",
+    "lib/dovado/router/sms/messages.rb",
     "ruby-dovado.gemspec",
     "spec/ruby-dovado_spec.rb",
     "spec/spec_helper.rb"
@@ -48,6 +54,8 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<bundler>, ["~> 1.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 2.0.1"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
+      s.add_development_dependency(%q<thread_safe>, ["~> 0.3"])
+      s.add_runtime_dependency(%q<thread_safe>, ["~> 0.3"])
     else
       s.add_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_dependency(%q<yard>, ["~> 0.7"])
@@ -55,6 +63,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<bundler>, ["~> 1.0"])
       s.add_dependency(%q<jeweler>, ["~> 2.0.1"])
       s.add_dependency(%q<simplecov>, [">= 0"])
+      s.add_dependency(%q<thread_safe>, ["~> 0.3"])
+      s.add_dependency(%q<thread_safe>, ["~> 0.3"])
     end
   else
     s.add_dependency(%q<rspec>, ["~> 2.8.0"])
@@ -63,6 +73,8 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<bundler>, ["~> 1.0"])
     s.add_dependency(%q<jeweler>, ["~> 2.0.1"])
     s.add_dependency(%q<simplecov>, [">= 0"])
+    s.add_dependency(%q<thread_safe>, ["~> 0.3"])
+    s.add_dependency(%q<thread_safe>, ["~> 0.3"])
   end
 end
 

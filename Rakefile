@@ -20,6 +20,8 @@ Jeweler::Tasks.new do |gem|
   gem.description = "Ruby library for interfacing Dovado routers."
   gem.email = "jan@janlindblom.se"
   gem.authors = ["Jan Lindblom"]
+  gem.add_dependency 'thread_safe', '~> 0.3'
+  gem.add_dependency 'celluloid', '~> 0.15'
 end
 Jeweler::RubygemsDotOrgTasks.new
 

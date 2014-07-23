@@ -1,19 +1,21 @@
+
 module Dovado
   class Router
-    @client = nil
-    @router_info = nil
+    include Celluloid
+    include Celluloid::Logger
+
     @address = nil
     @connected = nil
 
-    # Get the model name of this Dovado router.
+    # Create a new [Dovado::Router] object representing an actual Dovado router on the local
+    # network.
     #
-    # @return [String] The model name of this Dovado router.
-    def initialize(args)
+    def initialize(args=nil)
+      debug "Starting up #{self.class.to_s}..."
       # Defaults
       @address    = '192.168.0.1'
       user        = nil
       password    = nil
-      @client     = nil
       @connected  = false
       unless args.nil?
         @address  = args[:address]  if args[:address]
@@ -21,35 +23,59 @@ module Dovado
         password  = args[:password] if args[:password]
       end
 
-      @router_info  = Dovado::Router::Info.new
-      @router_info.local_ip = @address
-      
-      @client       = Dovado::Client.new({
+      Dovado::Client.supervise_as :client, {
         server:     @address,
         user:       user,
         password:   password
-        }) if @client.nil?
+      }
+
+      Dovado::Router::Info.supervise_as :router_info
+      router_info = Actor[:router_info]
+      router_info.local_ip = @address
+
+      Dovado::Router::Services.supervise_as :router_services
+      #info "Starting up..."
+    end
+
+    def services
+      client = Actor[:client]
+      router_services = Actor[:router_services]
+      unless router_services.valid?
+        client.connect
+        client.authenticate
+        string = client.command('services')
+        router_services.create_from_string string
+      end
+      router_services
     end
 
     def info
-      unless @router_info.valid?
-        @client.connect
-        info = @client.command('info')
-        puts "got from info command: #{info.inspect}"
-        @router_info.create_from_string info
-        @client.disconnect
+      client = Actor[:client]
+      router_info = Actor[:router_info]
+      unless router_info.valid?
+        client.connect
+        client.authenticate
+        info = client.command('info')
+        router_info.create_from_string info
       end
-      @router_info
+      router_info
     end
-    
-    def connect
-      @connected = true if @client.connect
-      @connected
-    end
-    
-    def disconnect
-      @connected = false if @client.disconnect
-      @connected
+
+    def sms
+      client = Actor[:client]
+      router_info = Actor[:router_info]
+      if router_info.valid?
+        unless router_info.sms.valid?
+          client.connect
+          client.authenticate
+          Dovado::Router::Sms.supervise_as :sms
+          sms = Actor[:sms]
+          sms.create_from_string(client.command('sms list'))
+          router_info.sms = sms
+          sms.async.load_messages
+        end
+      end
+      router_info.sms
     end
 
   end
