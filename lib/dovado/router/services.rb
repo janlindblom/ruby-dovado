@@ -6,7 +6,6 @@ module Dovado
       include Celluloid::Logger
       
       attr_accessor :list
-      @list       = nil
       @up_to_date = nil
       
       def initialize(args=nil)

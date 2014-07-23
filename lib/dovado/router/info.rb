@@ -14,7 +14,7 @@ module Dovado
       def initialize(args=nil)
         # Defaults
         @data = ThreadSafe::Cache.new
-        @data[:local_ip] = Addrinfo.ip '192.168.0.1'
+        @data[:local_ip] = '192.168.0.1'
         
         @up_to_date = false
         unless args.nil?
@@ -24,6 +24,10 @@ module Dovado
       end
     
       def create_from_string data_string=nil
+        unless Actor[:sms]
+          Dovado::Router::Sms.supervise_as :sms
+        end
+        sms = Actor[:sms]
         data_array = data_string.split("\n")
         data_array.each do |data_entry|
           entry_array = data_entry.split('=')
@@ -37,16 +41,13 @@ module Dovado
             when 'date'
               @data[:date] = Date.parse(val)
             when 'sms_unread'
-              @data[:sms] = Dovado::Router::Sms.new if @data[:sms].nil?
+              @data[:sms] = sms if @data[:sms].nil?
               @data[:sms].unread = val.to_i
             when 'sms_total'
-              @data[:sms] = Dovado::Router::Sms.new if @data[:sms].nil?
+              @data[:sms] = sms if @data[:sms].nil?
               @data[:sms].total = val.to_i
             when 'connected_devices'
               val = val.split(',')
-              @data[keysym] = val
-            when 'external_ip'
-              val = Addrinfo.ip(val)
               @data[keysym] = val
             else
               @data[keysym] = val
@@ -160,7 +161,7 @@ module Dovado
       end
       
       def local_ip= ip=nil
-        @data[:local_ip] = Addrinfo.ip(ip) unless ip.nil?
+        @data[:local_ip] = ip unless ip.nil?
       end
     
       def date
@@ -180,8 +181,11 @@ module Dovado
       end
     
       def sms
-        unless @data[:sms].nil?
-          @data[:sms] = Dovado::Router::Sms.new
+        if @data[:sms].nil?
+          unless Actor[:sms]
+            Dovado::Router::Sms.supervise_as :sms
+          end
+          @data[:sms] = Actor[:sms]
         end
         @data[:sms]
       end

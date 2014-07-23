@@ -16,6 +16,7 @@ describe Dovado::Router do
   it "checks the router for info" do
     @router = Dovado::Router.new(address: '10.0.1.1')
 
+    @router.info.local_ip.should eq '10.0.1.1'
     puts @router.info.inspect
   end
   
@@ -26,6 +27,9 @@ describe Dovado::Router do
   
   it "checks the router for sms" do
     @router = Dovado::Router.new(address: '10.0.1.1')
+
+    puts @router.sms.enabled
+    @router.sms.load_messages
     puts @router.sms.inspect
   end
 end

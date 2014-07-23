@@ -12,6 +12,7 @@ module Dovado
     #
     def initialize(args=nil)
       debug "Starting up #{self.class.to_s}..."
+      
       # Defaults
       @address    = '192.168.0.1'
       user        = nil
@@ -46,6 +47,10 @@ module Dovado
         string = client.command('services')
         router_services.create_from_string string
       end
+      if router_services.list[:sms] == 'enabled'
+        router_info = Actor[:router_info]
+        router_info.sms.enabled = true
+      end
       router_services
     end
 
@@ -68,11 +73,13 @@ module Dovado
         unless router_info.sms.valid?
           client.connect
           client.authenticate
-          Dovado::Router::Sms.supervise_as :sms
+          unless Actor[:sms]
+            Dovado::Router::Sms.supervise_as :sms
+          end
           sms = Actor[:sms]
-          sms.create_from_string(client.command('sms list'))
+          sms.async.create_from_string(client.command('sms list'))
           router_info.sms = sms
-          sms.async.load_messages
+          sms.load_messages
         end
       end
       router_info.sms
