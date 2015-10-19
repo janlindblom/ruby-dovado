@@ -6,8 +6,7 @@ module Dovado
   class Router
     class Info
       include Celluloid
-      include Celluloid::Logger
-      
+
       @data = nil
       @up_to_date = false
     
@@ -20,12 +19,11 @@ module Dovado
         unless args.nil?
           @data = args
         end
-        debug "Starting up #{self.class.to_s}..."
       end
     
       def create_from_string data_string=nil
         unless Actor[:sms]
-          Dovado::Router::Sms.supervise_as :sms
+          Dovado::Router::Sms.supervise as: :sms
         end
         sms = Actor[:sms]
         data_array = data_string.split("\n")
@@ -121,7 +119,7 @@ module Dovado
       end
     
       def traffic_modem_up= traffic_modem_up=nil
-        @data[:traffic_modem_tx] = traffic_modem_up
+        @data[:traffic_modem_tx] = traffic_modem_up.to_i
       end
     
       def traffic_modem_down
@@ -129,7 +127,7 @@ module Dovado
       end
     
       def traffic_modem_down= traffic_modem_down=nil
-        @data[:traffic_modem_rx] = traffic_modem_down
+        @data[:traffic_modem_rx] = traffic_modem_down.to_i
       end
     
       def connection
@@ -183,7 +181,7 @@ module Dovado
       def sms
         if @data[:sms].nil?
           unless Actor[:sms]
-            Dovado::Router::Sms.supervise_as :sms
+            Dovado::Router::Sms.supervise as: :sms
           end
           @data[:sms] = Actor[:sms]
         end

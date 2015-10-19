@@ -1,5 +1,6 @@
 require 'thread_safe'
-require 'celluloid'
+#require 'celluloid'
+require 'celluloid/current'
 
 require 'dovado/utilities'
 require 'dovado/client'

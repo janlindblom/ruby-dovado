@@ -14,11 +14,11 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   gem.name = "ruby-dovado"
-  gem.homepage = "https://bitbucket.org/lilycode/ruby-dovado"
+  gem.homepage = "https://bitbucket.org/janlindblom/ruby-dovado"
   gem.license = "MIT"
   gem.summary = "Ruby library for interfacing Dovado routers."
   gem.description = "Ruby library for interfacing Dovado routers."
-  gem.email = "jan@janlindblom.se"
+  gem.email = "janlindblom@fastmail.fm"
   gem.authors = ["Jan Lindblom"]
   gem.add_dependency 'thread_safe', '~> 0.3'
   gem.add_dependency 'celluloid', '~> 0.15'

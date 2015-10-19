@@ -1,7 +1,6 @@
 module Dovado
   class Utilities
     include Celluloid
-    include Celluloid::Logger
     
     # Convert a key name to symbol.
     # 

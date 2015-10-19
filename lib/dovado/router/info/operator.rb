@@ -4,7 +4,6 @@ module Dovado
     class Info
       class Operator
         include Celluloid
-        include Celluloid::Logger
         
         attr_accessor :number, :name, :commands
         
@@ -14,7 +13,6 @@ module Dovado
           unless args.nil?
             @number = args[:number] unless args[:number].nil?
           end
-          debug "Starting up #{self.class.to_s}..."
         end
 
       end

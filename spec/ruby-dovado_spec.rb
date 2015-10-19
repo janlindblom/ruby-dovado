@@ -2,41 +2,40 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Dovado::Utilities do
   it "converts strings to symbols" do
-    Dovado::Utilities.name_to_sym("key name with spaces").should eq :key_name_with_spaces
+    expect(Dovado::Utilities.name_to_sym("key name with spaces")).to eq :key_name_with_spaces
   end
 end
 
 describe Dovado::Router do
   @router = nil
-  
+  before(:context) do
+    @router = Dovado::Router.new(address: '192.168.0.1', user: 'admin', password: 'password')
+  end
+
   it "connects to a given router" do
-    @router = Dovado::Router.new(address: '10.0.1.1')
+    expect(@router).to be_a Dovado::Router
   end
   
   it "checks the router for info" do
-    @router = Dovado::Router.new(address: '10.0.1.1')
-
-    @router.info.local_ip.should eq '10.0.1.1'
-    puts @router.info.inspect
+    expect(@router.info).to_not be_nil
+    expect(@router.info.local_ip).to eq '192.168.0.1'
+    expect(@router.info).to_not be_nil
   end
   
   it "checks the router for services" do
-    @router = Dovado::Router.new(address: '10.0.1.1')
-    puts @router.services.inspect
+    expect(@router.services).to_not be_nil
   end
   
   it "checks the router for sms" do
-    @router = Dovado::Router.new(address: '10.0.1.1')
-
-    puts @router.sms.enabled
+    expect(@router.sms).to_not be_nil
     @router.sms.load_messages
-    puts @router.sms.inspect
   end
 end
 
 describe Dovado::Router::Info::Operator::Telia do
   it "has commands" do
     operator = Dovado::Router::Info::Operator::Telia.new
-    puts operator.inspect
+    expect(operator.number).to be_a String
+    expect(operator.commands).to_not be_nil
   end
 end

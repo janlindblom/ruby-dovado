@@ -3,14 +3,13 @@ require 'net/telnet'
 module Dovado
   class Client
     include Celluloid
-    include Celluloid::Logger
-    
-    @@server = nil
+
+    @server = nil
     @address = nil
     @user = nil
     @password = nil
-    @@authenticated = nil
-    
+    @authenticated = nil
+
     def initialize(args=nil)
       # Defaults
       @address   = '192.168.0.1'
@@ -21,35 +20,34 @@ module Dovado
         @user     = args[:user]     unless      args[:user].nil?
         @password = args[:password] unless  args[:password].nil?
       end
-      debug "Starting up #{self.class.to_s}..."
     end
-    
+
     def command(text=nil)
       unless text.nil?
-        #connect
-        #authenticate
-    
-        res = @@server.puts(text)
-        res = @@server.waitfor(/>>\s/)
+        #connect unless connected?
+        #authenticate unless authenticated?
+
+        res = @server.puts(text)
+        res = @server.waitfor(/>>\s/)
         #disconnect
         res
       end
     end
     
     def connect
-      if @@server.nil?
-        @@server = Net::Telnet.new('Host' => @address, 'Port' => 6435, 'Telnetmode' => false, 'Prompt' => />>\s/)
+      if @server.nil?
+        @server = Net::Telnet.new('Host' => @address, 'Port' => 6435, 'Telnetmode' => false, 'Prompt' => />>\s/)
       end
     end
     
     def disconnect
-      unless @@server.nil?
-        @@server.close
+      unless @server.nil?
+        @server.close
       end
     end
     
     def connected?
-      unless @@server.nil?
+      unless @server.nil?
         true
       else
         false
@@ -57,27 +55,27 @@ module Dovado
     end
     
     def authenticate
-      unless @@server.nil?
+      unless @server.nil?
         unless authenticated?
           user = @user unless @user.nil?
           password = @password unless @password.nil?
         
-          @@server.cmd("user #{user}")
-          @@server.waitfor(/>>\s/)
-          @@server.cmd("pass #{password}")
+          @server.cmd("user #{user}")
+          @server.waitfor(/>>\s/)
+          @server.cmd("pass #{password}")
         
           # TODO: verify authentication
-          @@authenticated = true
+          @authenticated = true
         else
-          @@authenticated = false
+          @authenticated = false
         end
       else
-        @@authenticated = false
+        @authenticated = false
       end
     end
     
     def authenticated?
-      @@authenticated
+      @authenticated
     end
     
   end

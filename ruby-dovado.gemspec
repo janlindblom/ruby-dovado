@@ -11,9 +11,9 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Jan Lindblom"]
-  s.date = "2014-07-22"
+  s.date = "2015-10-19"
   s.description = "Ruby library for interfacing Dovado routers."
-  s.email = "jan@janlindblom.se"
+  s.email = "janlindblom@fastmail.fm"
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.md"
@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
     ".rspec",
+    ".ruby-version",
     "Gemfile",
     "LICENSE.txt",
     "README.md",
@@ -32,49 +33,57 @@ Gem::Specification.new do |s|
     "lib/dovado/router/info.rb",
     "lib/dovado/router/info/operator.rb",
     "lib/dovado/router/info/operator/telia.rb",
+    "lib/dovado/router/services.rb",
     "lib/dovado/router/sms.rb",
     "lib/dovado/router/sms/message.rb",
     "lib/dovado/router/sms/messages.rb",
+    "lib/dovado/utilities.rb",
     "ruby-dovado.gemspec",
     "spec/ruby-dovado_spec.rb",
     "spec/spec_helper.rb"
   ]
-  s.homepage = "https://bitbucket.org/lilycode/ruby-dovado"
+  s.homepage = "https://bitbucket.org/janlindblom/ruby-dovado"
   s.licenses = ["MIT"]
-  s.rubygems_version = "2.3.0"
+  s.rubygems_version = "2.4.5"
   s.summary = "Ruby library for interfacing Dovado routers."
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
-      s.add_development_dependency(%q<yard>, ["~> 0.7"])
-      s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 2.0.1"])
+      s.add_runtime_dependency(%q<celluloid>, ["~> 0.17"])
+      s.add_development_dependency(%q<rspec>, ["~> 3"])
+      s.add_development_dependency(%q<yard>, ["~> 0.8"])
+      s.add_development_dependency(%q<rdoc>, ["~> 4.2"])
+      s.add_development_dependency(%q<bundler>, ["> 1.3"])
+      s.add_development_dependency(%q<jeweler>, ["~> 2"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_development_dependency(%q<thread_safe>, ["~> 0.3"])
       s.add_runtime_dependency(%q<thread_safe>, ["~> 0.3"])
+      s.add_runtime_dependency(%q<celluloid>, ["~> 0.15"])
     else
-      s.add_dependency(%q<rspec>, ["~> 2.8.0"])
-      s.add_dependency(%q<yard>, ["~> 0.7"])
-      s.add_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_dependency(%q<jeweler>, ["~> 2.0.1"])
+      s.add_dependency(%q<celluloid>, ["~> 0.17"])
+      s.add_dependency(%q<rspec>, ["~> 3"])
+      s.add_dependency(%q<yard>, ["~> 0.8"])
+      s.add_dependency(%q<rdoc>, ["~> 4.2"])
+      s.add_dependency(%q<bundler>, ["> 1.3"])
+      s.add_dependency(%q<jeweler>, ["~> 2"])
       s.add_dependency(%q<simplecov>, [">= 0"])
       s.add_dependency(%q<thread_safe>, ["~> 0.3"])
       s.add_dependency(%q<thread_safe>, ["~> 0.3"])
+      s.add_dependency(%q<celluloid>, ["~> 0.15"])
     end
   else
-    s.add_dependency(%q<rspec>, ["~> 2.8.0"])
-    s.add_dependency(%q<yard>, ["~> 0.7"])
-    s.add_dependency(%q<rdoc>, ["~> 3.12"])
-    s.add_dependency(%q<bundler>, ["~> 1.0"])
-    s.add_dependency(%q<jeweler>, ["~> 2.0.1"])
+    s.add_dependency(%q<celluloid>, ["~> 0.17"])
+    s.add_dependency(%q<rspec>, ["~> 3"])
+    s.add_dependency(%q<yard>, ["~> 0.8"])
+    s.add_dependency(%q<rdoc>, ["~> 4.2"])
+    s.add_dependency(%q<bundler>, ["> 1.3"])
+    s.add_dependency(%q<jeweler>, ["~> 2"])
     s.add_dependency(%q<simplecov>, [">= 0"])
     s.add_dependency(%q<thread_safe>, ["~> 0.3"])
     s.add_dependency(%q<thread_safe>, ["~> 0.3"])
+    s.add_dependency(%q<celluloid>, ["~> 0.15"])
   end
 end
 

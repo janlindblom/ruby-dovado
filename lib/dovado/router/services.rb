@@ -3,7 +3,6 @@ module Dovado
   class Router
     class Services
       include Celluloid
-      include Celluloid::Logger
       
       attr_accessor :list
       @up_to_date = nil
@@ -17,7 +16,6 @@ module Dovado
           end
           @up_to_date = true
         end
-        debug "Starting up #{self.class.to_s}..."
       end
       
       def create_from_string data_string=nil

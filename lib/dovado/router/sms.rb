@@ -2,13 +2,12 @@ module Dovado
   class Router
     class Sms
       include Celluloid
-      include Celluloid::Logger
 
       attr_accessor :unread, :total, :enabled, :ids
       @ids = nil
 
       def initialize(args=nil)
-        Dovado::Router::Sms::Messages.supervise_as :messages
+        Dovado::Router::Sms::Messages.supervise as: :messages
         messages = Actor[:messages]
         @enabled = false
         @ids = ThreadSafe::Array.new
@@ -18,7 +17,6 @@ module Dovado
         end
         client = Actor[:client]
         create_from_string(client.command('sms list'))
-        debug "Starting up #{self.class.to_s}..."
       end
 
       def messages
@@ -55,7 +53,6 @@ module Dovado
         client = Actor[:client]
         messages = Actor[:messages]
         @ids.each do |id|
-          debug "Dovado::Router::Sms#load_messages: #{id}"
           messages.add_message Dovado::Router::Sms::Message.from_string(client.command("sms recvtxt #{id}"))
         end
       end
