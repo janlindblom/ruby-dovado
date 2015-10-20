@@ -21,9 +21,9 @@ gem "ruby-dovado"
 They load it in your code:
 
 ```ruby
-require “dovado”
+require "dovado"
 
-router = Dovado::Router.new(address: “192.168.0.1”, user: “admin”, password: “password”)
+router = Dovado::Router.new(address: "192.168.0.1", user: "admin", password: "password")
 router.info
 router.sms.load_messages
 message = router.sms.get_message 12
