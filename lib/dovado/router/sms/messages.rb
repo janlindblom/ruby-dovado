@@ -3,21 +3,34 @@ require 'thread_safe'
 module Dovado
   class Router
     class Sms
+      # Text messages.
+      # 
+      # @since 1.0.0
       class Messages
         include Celluloid
-        
-        @messages = nil
-  
-        def initialize(args=nil)
+
+        # Create a new {Messages} object.
+        def initialize
           @messages = ThreadSafe::Cache.new
         end
-  
-        def add_message message=nil
+
+        # Add a message to the local cache.
+        # @param [Message] message
+        def add_message(message)
           @messages[message.id] = message unless message.nil?
         end
-  
-        def get_message id=nil
+
+        # Fetch a {Message} from the cache.
+        # 
+        # @param [String,Integer,Symbol] id Id of the message.
+        # @return [Message] message object.
+        # @see {Message}
+        def get_message(id)
           @messages[id] unless id.nil?
+        end
+
+        def ids
+          @messages.keys
         end
 
       end

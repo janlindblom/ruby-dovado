@@ -1,43 +1,30 @@
 # encoding: utf-8
+require "bundler/gem_tasks"
+require "yard"
+require "yard/rake/yardoc_task"
+require "rspec/core/rake_task"
 
-require 'rubygems'
-require 'bundler'
-begin
-  Bundler.setup(:default, :development)
-rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
-  exit e.status_code
-end
-require 'rake'
+desc "Run RSpec code examples"
+namespace :spec do
+  desc "Run offline RSpec code examples"
+  RSpec::Core::RakeTask.new(:offline) do |t|
+    t.rspec_opts = "--tag offline"
+  end
 
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  gem.name = "ruby-dovado"
-  gem.homepage = "https://bitbucket.org/janlindblom/ruby-dovado"
-  gem.license = "MIT"
-  gem.summary = "Ruby library for interfacing Dovado routers."
-  gem.description = "Ruby library for interfacing Dovado routers."
-  gem.email = "janlindblom@fastmail.fm"
-  gem.authors = ["Jan Lindblom"]
-  gem.add_dependency 'thread_safe', '~> 0.3'
-  gem.add_dependency 'celluloid', '~> 0.15'
-end
-Jeweler::RubygemsDotOrgTasks.new
+  desc "Run online RSpec code examples"
+  RSpec::Core::RakeTask.new(:online) do |t|
+    t.rspec_opts = "--tag online"
+  end
 
-require 'rspec/core'
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.pattern = FileList['spec/**/*_spec.rb']
+  desc "Run all RSpec code examples"
+  RSpec::Core::RakeTask.new(:all) do |t|
+    t.rspec_opts = "--tag offline --tag online"
+  end
 end
 
-desc "Code coverage detail"
-task :simplecov do
-  ENV['COVERAGE'] = "true"
-  Rake::Task['spec'].execute
+YARD::Rake::YardocTask.new do |t|
+  t.files   = ['lib/**/*.rb']
+  t.stats_options = ['--list-undoc']
 end
 
-task :default => :spec
-
-require 'yard'
-YARD::Rake::YardocTask.new
+task :default => "spec:offline"

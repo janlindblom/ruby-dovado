@@ -3,18 +3,40 @@ require 'date'
 module Dovado
   class Router
     class Sms
+      # A text message (SMS).
+      # 
+      # @since 1.0.0
       class Message
         include Celluloid
-        
-        attr_reader :id, :body, :pdus, :from, :sent, :encoding
-  
-        @id = nil
-        @body = nil
-        @pdus = nil
-        @from = nil
-        @sent = nil
-        @encoding = nil
-  
+
+        # Message Id.
+        # @return [String,Integer,Symbol]
+        attr_reader :id
+        # Message body.
+        # @return [String]
+        attr_reader :body
+        # Message PDU's.
+        # @return [Array]
+        attr_reader :pdus
+        # Message sender.
+        # @return [String]
+        attr_reader :from
+        # Message send timestamp.
+        # @return [DateTime]
+        attr_reader :sent
+        # Message text encoding.
+        # @return [Encoding]
+        attr_reader :encoding
+
+        # Create a new {Message} object.
+        # 
+        # @param [Hash] args arguments.
+        # @option args [Integer,String,Symbol] :id Message Id.
+        # @option args [String] :body Message body.
+        # @option args [Array] :pdus Message PDU's.
+        # @option args [String] :from Message sender.
+        # @option args [DateTime] :sent Message send timestamp.
+        # @option args [Encoding] :encoding Message text encoding.
         def initialize(args=nil)
           unless args.nil?
             @id = args[:id] unless args[:id].nil?
@@ -25,8 +47,12 @@ module Dovado
             @encoding = args[:encoding] unless args[:encoding].nil?
           end
         end
-  
-        def self.from_string string=nil
+
+        # Create a new {Message} object from a +String+.
+        # 
+        # @param [String] string message data to create object from.
+        # @return [Message] a new {Message} object.
+        def self.from_string(string=nil)
           hash = ThreadSafe::Cache.new
           message_body = ""
           array = string.split("\n")
@@ -58,7 +84,7 @@ module Dovado
           end
           hash[:body] = message_body.tr(">>", "").tr("\x17", "").strip.force_encoding(hash[:encoding])
     
-          Dovado::Router::Sms::Message.new(hash)
+          Message.new(hash)
         end
       end
     end

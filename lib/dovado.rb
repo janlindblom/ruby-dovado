@@ -1,7 +1,6 @@
-require 'thread_safe'
-#require 'celluloid'
 require 'celluloid/current'
 
+require 'dovado/connection_error'
 require 'dovado/utilities'
 require 'dovado/client'
 
@@ -15,5 +14,9 @@ require 'dovado/router/sms'
 require 'dovado/router/sms/messages'
 require 'dovado/router/sms/message'
 
+# The Ruby-Dovado library.
+# 
+# @author Jan Lindblom <janlindblom@fastmail.fm>
+# @version 1.0.0
 module Dovado
 end
