@@ -64,6 +64,11 @@ module Dovado
       router_services
     end
 
+    def internet
+      Internet.supervise as: :internet, size: 1 unless Actor[:internet]
+      Actor[:internet]
+    end
+
     # Fetch information from the router.
     # 
     # @return [Info] The {Info} object.

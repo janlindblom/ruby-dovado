@@ -87,6 +87,14 @@ module Dovado
         @data.keys
       end
 
+      # Check if the {Info} object has a given key.
+      # 
+      # @param [Symbol] key the key to check for.
+      # @return [Boolean] +true+ or +false+
+      def has_key?(key)
+        keys.member?(key)
+      end
+
       private
 
       def touch!

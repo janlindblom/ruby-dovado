@@ -57,6 +57,14 @@ module Dovado
         @list.keys
       end
 
+      # Check if the {Services} object has a given key.
+      # 
+      # @param [Symbol] key the key to check for.
+      # @return [Boolean] +true+ or +false+
+      def has_key?(key)
+        keys.member?(key)
+      end
+
       # Checks if this {Services} object is still valid.
       # 
       # @return [Boolean] +true+ or +false+.
