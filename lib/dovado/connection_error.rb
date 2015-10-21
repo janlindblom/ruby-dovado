@@ -1,5 +1,7 @@
 # Custom error for failed connections.
 # 
 # @since 1.0.0
-class Dovado::ConnectionError < StandardError
+module Dovado
+  class ConnectionError < StandardError
+  end
 end
