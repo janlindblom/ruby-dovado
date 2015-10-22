@@ -3,6 +3,9 @@
 A Dovado Router API for Ruby.
 
 [![Build Status](https://drone.io/bitbucket.org/janlindblom/ruby-dovado/status.png)](https://drone.io/bitbucket.org/janlindblom/ruby-dovado/latest)
+[![Gem](https://img.shields.io/gem/v/ruby-dovado.svg?style=flat-square)](https://rubygems.org/gems/ruby-dovado)
+[![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg?style=flat-square)](http://www.rubydoc.info/gems/ruby-dovado/frames)
+[![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg?style=flat-square)](#copyright)
 
 This library serves to enable easy access to the built in, Telnet-based, rudimentary API of the [routers from Dovado](http://www.dovado.com/en/products) running software version 6 and 7 (applies to the original Tiny and Go routers, among others). It might work with software version 8 routers (the Tiny AC) too but I have no means to test against that since I don't have one of the later routers.
 
@@ -21,9 +24,9 @@ gem "ruby-dovado"
 They load it in your code:
 
 ```ruby
-require “dovado”
+require "dovado"
 
-router = Dovado::Router.new(address: “192.168.0.1”, user: “admin”, password: “password”)
+router = Dovado::Router.new(address: "192.168.0.1", user: "admin", password: "password")
 router.info
 router.sms.load_messages
 message = router.sms.get_message 12
