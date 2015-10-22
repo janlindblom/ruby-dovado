@@ -64,9 +64,22 @@ module Dovado
       router_services
     end
 
+    # Get the Internet Connection object.
+    # @since 1.0.2
+    # @return [Internet] the Internet Connection object.
+    # @see {Internet}
     def internet
       Internet.supervise as: :internet, size: 1 unless Actor[:internet]
       Actor[:internet]
+    end
+
+    # Get the Data Traffic object.
+    # @since 1.0.2
+    # @return [Traffic] the Data Traffic object
+    # @see {Traffic}
+    def traffic
+      Traffic.supervise as: :traffic, size: 1 unless Actor[:traffic]
+      Actor[:traffic]
     end
 
     # Fetch information from the router.
