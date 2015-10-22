@@ -23,4 +23,18 @@ describe Dovado::Router do
     router_sms = @router.sms
     expect(router_sms).to_not be_nil
   end
+
+  it "can check the data traffic amounts", online: true do
+    router_traffic = @router.traffic
+    expect(router_traffic.up).to be_a Dovado::Router::Traffic::Amount
+    expect(router_traffic.down).to be_a Dovado::Router::Traffic::Amount
+    expect(router_traffic.up.bytes).to be_a Integer
+    expect(router_traffic.down.bytes).to be_a Integer
+    expect(router_traffic.up.kilobytes).to be_a Integer
+    expect(router_traffic.down.kilobytes).to be_a Integer
+    expect(router_traffic.up.megabytes).to be_a Float
+    expect(router_traffic.down.megabytes).to be_a Float
+    expect(router_traffic.up.gigabytes).to be_a Float
+    expect(router_traffic.down.gigabytes).to be_a Float
+  end
 end
