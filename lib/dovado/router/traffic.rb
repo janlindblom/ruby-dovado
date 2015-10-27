@@ -4,7 +4,7 @@ module Dovado
   class Router
     # Traffic Counters.
     # 
-    # @since 1.0.2
+    # @since 1.0.3
     class Traffic
       include Celluloid
 

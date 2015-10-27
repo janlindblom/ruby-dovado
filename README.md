@@ -7,11 +7,13 @@ A Dovado Router API for Ruby.
 [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg?style=flat-square)](http://www.rubydoc.info/gems/ruby-dovado/frames)
 [![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg?style=flat-square)](#copyright)
 
-This library serves to enable easy access to the built in, Telnet-based, rudimentary API of the [routers from Dovado](http://www.dovado.com/en/products) running software version 6 and 7 (applies to the original Tiny and Go routers, among others). It might work with software version 8 routers (the Tiny AC) too but I have no means to test against that since I don't have one of the later routers.
+This library serves to enable easy access to the built in, Telnet-based, rudimentary API of the [routers from Dovado](http://www.dovado.com/en/products) running software version 7 and 8 (applies to the original Tiny, Go and Pro routers). It might work with the Tiny AC too but I have no means to test against that.
 
 ## Purpose
 
 The original purpose of this library was to enable addition of router information about connection state, mobile data connection quality and data quota usage on a wall-mounted TV or a small touch screen connected to a Raspberry Pi, accessing a dashboard implemented using [Dashing](https://shopify.github.io/dashing/).
+
+See this blog entry for some discussion on usage and background: "[A Ruby API for Dovado routers](http://www.janlindblom.se/blog/programming/2015/10/22/ruby-dovado-library.html)".
 
 ## Usage
 
@@ -31,6 +33,16 @@ router.info
 router.sms.load_messages
 message = router.sms.get_message 12
 ```
+
+The main elements available on the `router` object are:
+
+* `info` - [Dovado::Router::Info](http://www.rubydoc.info/gems/ruby-dovado/Dovado/Router/Info)
+* `services` - [Dovado::Router::Services](http://www.rubydoc.info/gems/ruby-dovado/Dovado/Router/Services)
+* `internet` - [Dovado::Router::Internet](http://www.rubydoc.info/gems/ruby-dovado/Dovado/Router/Internet)
+* `sms` - [Dovado::Router::Sms](http://www.rubydoc.info/gems/ruby-dovado/Dovado/Router/Sms)
+* `traffic` - [Dovado::Router::Traffic](http://www.rubydoc.info/gems/ruby-dovado/Dovado/Router/Traffic)
+
+For the full documentation, head over to [rubydoc.info](http://www.rubydoc.info/gems/ruby-dovado/frames).
 
 ## Design Considerations
 

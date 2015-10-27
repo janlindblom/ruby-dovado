@@ -3,7 +3,7 @@ require 'celluloid/current'
 # The Ruby-Dovado library.
 # 
 # @author Jan Lindblom <janlindblom@fastmail.fm>
-# @version 1.0.2
+# @version 1.0.3
 module Dovado
 end
 
@@ -16,6 +16,7 @@ require 'dovado/router'
 require 'dovado/router/services'
 
 require 'dovado/router/info'
+require 'dovado/router/info/signal'
 require 'dovado/router/info/operator'
 require 'dovado/router/info/operator/telia'
 

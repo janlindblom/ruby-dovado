@@ -16,11 +16,13 @@ namespace :spec do
     t.rspec_opts = "--tag online"
   end
 
-  desc "Run all RSpec code examples"
   RSpec::Core::RakeTask.new(:all) do |t|
     t.rspec_opts = "--tag offline --tag online"
   end
 end
+
+desc "Run all RSpec code examples"
+task :spec => 'spec:all'
 
 YARD::Rake::YardocTask.new do |t|
   t.files   = ['lib/**/*.rb']
