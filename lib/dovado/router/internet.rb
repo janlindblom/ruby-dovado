@@ -2,7 +2,7 @@ module Dovado
   class Router
     # Internet Connection.
     # 
-    # @since 1.0.2
+    # @since 1.0.3
     class Internet
       include Celluloid
 

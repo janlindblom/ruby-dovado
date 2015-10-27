@@ -66,7 +66,9 @@ module Dovado
           'Telnetmode' => false,
           'Prompt' => />>\s/)
       end
-    rescue IOError
+    rescue Net::OpenTimeout => ex
+      raise ConnectionError.new "Error connecting to router: #{ex.message}"
+    rescue IOError => ex
       disconnect
       raise ConnectionError.new "Error connecting to router: #{ex.message}"
     rescue Net::ReadTimeout => ex
@@ -135,7 +137,7 @@ module Dovado
         unless authenticated?
           raise ArgumentError.new "Username cannot be nil" if @user.nil?
           raise ArgumentError.new "Password cannot be nil" if @password.nil?
-        
+
           @server.cmd "user #{@user}"
           @server.waitfor />>\s/
           @server.cmd "pass #{@password}"

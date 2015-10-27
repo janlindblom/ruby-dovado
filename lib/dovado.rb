@@ -16,6 +16,7 @@ require 'dovado/router'
 require 'dovado/router/services'
 
 require 'dovado/router/info'
+require 'dovado/router/info/signal'
 require 'dovado/router/info/operator'
 require 'dovado/router/info/operator/telia'
 

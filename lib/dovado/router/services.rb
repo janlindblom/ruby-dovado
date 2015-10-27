@@ -9,6 +9,18 @@ module Dovado
     class Services
       include Celluloid
 
+      # Get status of sms service
+      # 
+      # @return [String] a string with "enabled" or "disabled"
+      # @since 1.0.3
+      attr_reader :sms
+
+      # Get status of home automation service
+      # 
+      # @return [String] a string with "enabled" or "disabled"
+      # @since 1.0.3
+      attr_reader :home_automation
+
       # Create a new {Services} object.
       # 
       # @param [Hash] args optional argiments
@@ -71,6 +83,30 @@ module Dovado
       def valid?
         return false if @last_update.nil?
         (@last_update + SecureRandom.random_number(9) + 1 <= Time.now.to_i)
+      end
+
+      def sms
+        @list[:sms] if has_key? :sms
+      end
+
+      # Boolean check if sms service is enabled
+      # 
+      # @return [Boolean] +true+ or +false+
+      # @since 1.0.3
+      def sms?
+        sms ? (sms == "enabled") : false
+      end
+
+      def home_automation
+        @list[:homeautomation] if has_key? :homeautomation
+      end
+
+      # Boolean check if home automation is enabled
+      # 
+      # @return [Boolean] +true+ or +false+
+      # @since 1.0.3
+      def home_automation?
+        home_automation ? (home_automation == "enabled") : false
       end
 
       private

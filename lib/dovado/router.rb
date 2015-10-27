@@ -22,22 +22,17 @@ module Dovado
     def initialize(args=nil)
       @address    = '192.168.0.1' # Default address
       @port       = 6435
-      user        = "admin"       # Default username
-      password    = "password"    # Default password
+      @user        = "admin"       # Default username
+      @password    = "password"    # Default password
       @connected  = false
       unless args.nil?
-        @address  = args[:address]  if args.has_key? :address and !args[:address].nil?
-        @port     = args[:port]     if args.has_key? :port and !args[:port].nil?
-        user      = args[:user]     if args.has_key? :user and !args[:user].nil?
-        password  = args[:password] if args.has_key? :password and !args[:password].nil?
+        @address  = args[:address]  if args.has_key? :address
+        @port     = args[:port]     if args.has_key? :port
+        @user      = args[:user]     if args.has_key? :user
+        @password  = args[:password] if args.has_key? :password
       end
 
-      Client.supervise as: :client, size: 1, args: [{
-        server:     @address,
-        port:       @port,
-        user:       user,
-        password:   password
-      }]
+      supervise_client
     end
 
     # Fetch services information from the router.
@@ -45,7 +40,7 @@ module Dovado
     # @return [Services] The {Services} object
     # @see {Services}
     def services
-      Services.supervise as: :router_services, size: 1 unless Actor[:router_services]
+      supervise_services
       client = Actor[:client]
       router_services = Actor[:router_services]
 
@@ -62,6 +57,11 @@ module Dovado
         sms.enabled = true
       end
       router_services
+    rescue ConnectionError => ex
+      Actor[:client].terminate
+      supervise_client
+      supervise_services
+      raise ex
     end
 
     # Get the Internet Connection object.
@@ -87,7 +87,7 @@ module Dovado
     # @return [Info] The {Info} object.
     # @see {Info}
     def info
-      Info.supervise as: :router_info, size: 1 unless Actor[:router_info]
+      supervise_info
       router_info = Actor[:router_info]
       client = Actor[:client]
       router_info = Actor[:router_info]
@@ -99,6 +99,11 @@ module Dovado
       end
       services
       router_info
+    rescue ConnectionError => ex
+      Actor[:client].terminate
+      supervise_client
+      supervise_info
+      raise ex
     end
 
     # Fetch text messages from the router.
@@ -108,6 +113,30 @@ module Dovado
     def sms
       Sms.supervise as: :sms, size: 1 unless Actor[:sms]
       Actor[:sms]
+    end
+
+    private
+
+    def supervise_services
+      return Services.supervise as: :router_services, size: 1 unless Actor[:router_services]
+      return Services.supervise as: :router_services, size: 1 if Actor[:router_services] and Actor[:router_services].dead?
+    end
+
+    def supervise_client
+      args = [{
+        server:     @address,
+        port:       @port,
+        user:       @user,
+        password:   @password
+      }]
+
+      return Client.supervise as: :client, size: 1, args: args unless Actor[:client]
+      return Client.supervise as: :client, size: 1, args: args if Actor[:router_services] and Actor[:router_services].dead?
+    end
+
+    def supervise_info
+      return Info.supervise as: :router_info, size: 1 unless Actor[:router_info]
+      return Info.supervise as: :router_info, size: 1 if Actor[:router_info] and Actor[:router_info].dead?
     end
 
   end
