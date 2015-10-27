@@ -3,7 +3,7 @@ require 'celluloid/current'
 # The Ruby-Dovado library.
 # 
 # @author Jan Lindblom <janlindblom@fastmail.fm>
-# @version 1.0.3a
+# @version 1.0.3
 module Dovado
 end
 
