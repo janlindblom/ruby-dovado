@@ -35,6 +35,15 @@ module Dovado
         end
       end
 
+      # Update the data in this {Services} object.
+      def update!
+        client = Actor[:client]
+        client.connect unless client.connected?
+        client.authenticate unless client.authenticated?
+        string = client.command('services')
+        create_from_string string
+      end
+
       # Create a new {Services} object from a string with values from the router
       # API.
       # 
@@ -107,6 +116,12 @@ module Dovado
       # @since 1.0.3
       def home_automation?
         home_automation ? (home_automation == "enabled") : false
+      end
+
+      # @api private
+      def self.setup_supervision!
+        return supervise as: :router_services, size: 1 unless Actor[:router_services]
+        return supervise as: :router_services, size: 1 if Actor[:router_services] and Actor[:router_services].dead?
       end
 
       private

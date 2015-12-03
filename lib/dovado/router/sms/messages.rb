@@ -29,6 +29,10 @@ module Dovado
           @messages[id] unless id.nil?
         end
 
+        def [](id)
+          get_message(id)
+        end
+
         def ids
           @messages.keys
         end

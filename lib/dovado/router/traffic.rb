@@ -13,8 +13,8 @@ module Dovado
         @data = ThreadSafe::Cache.new
         @client = Actor[:client] unless @client
         @last_update = nil
-        @data[:down] = Traffic::Amount.new(0)
-        @data[:up] = Traffic::Amount.new(0)
+        @data[:down] = Traffic::Amount.new
+        @data[:up] = Traffic::Amount.new
       end
 
       # Data upload traffic amount.
@@ -33,7 +33,23 @@ module Dovado
         @data[:down]
       end
 
-      # Update this {Traffic} object.
+      # Data download total traffic amount. Useful with multiple modems.
+      # 
+      # @return [Amount] total amount of downloaded data.
+      def down_total
+        up, down = update_total_traffic_from_router_info
+        Traffic::Amount.new down
+      end
+
+      # Data upload total traffic amount. Useful with multiple modems.
+      # 
+      # @return [Amount] total amount of uploaded data.
+      def up_total
+        up, down = update_total_traffic_from_router_info
+        Traffic::Amount.new up
+      end
+
+      # Update the data in this {Traffic} object.
       def update!
         unless valid?
           begin
@@ -41,8 +57,8 @@ module Dovado
           rescue
             up, down = fetch_from_router_info
           end
-          @data[:down] = Traffic::Amount.new(down)
-          @data[:up] = Traffic::Amount.new(up)
+          @data[:down] = Traffic::Amount.new down
+          @data[:up] = Traffic::Amount.new up
           touch!
         end
       end
@@ -53,6 +69,11 @@ module Dovado
       def valid?
         return false if @last_update.nil?
         (@last_update + SecureRandom.random_number(9) + 1 <= Time.now.to_i)
+      end
+
+      # @api private
+      def self.setup_supervision!
+        supervise as: :traffic, size: 1 unless Actor[:traffic]
       end
 
       private
@@ -79,10 +100,19 @@ module Dovado
 
       def fetch_from_router_info
         up, down = [@data[:up], @data[:down]]
-        Info.supervise as: :router_info, size: 1 unless Actor[:router_info]
+        begin
+          up, down = update_total_traffic_from_router_info
+        rescue Exception
+        end
+        [up, down]
+      end
+
+      def update_total_traffic_from_router_info
+        Info.setup_supervision! unless Actor[:router_info]
         router_info = Actor[:router_info]
-        down = router_info[:traffic_modem_rx].to_i if router_info.has_key? :traffic_modem_rx
-        up = router_info[:traffic_modem_rx].to_i if router_info.has_key? :traffic_modem_tx
+        router_info.update! unless router_info.valid?
+        down = router_info.traffic_modem_rx
+        up = router_info.traffic_modem_tx
         [up, down]
       end
 

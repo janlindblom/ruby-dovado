@@ -58,6 +58,10 @@ module Dovado
         @state[:status] = value
       end
 
+      def self.setup_supervision!
+        supervise as: :internet, size: 1 unless Actor[:internet]
+      end
+
     end
   end
 end
