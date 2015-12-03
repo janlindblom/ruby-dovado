@@ -63,6 +63,7 @@ module Dovado
       # 
       # @param [String] data_string String with text message data from the
       # router.
+      # @api private
       def create_from_string(data_string=nil)
         data_array = data_string.split("\n")
         data_array.each do |data_entry|
@@ -90,6 +91,10 @@ module Dovado
         @ids.each do |id|
           messages.add_message Message.from_string(client.command("sms recvtxt #{id}"))
         end
+      end
+
+      def self.setup_supervision!
+        supervise as: :sms, size: 1 unless Actor[:sms]
       end
 
     end

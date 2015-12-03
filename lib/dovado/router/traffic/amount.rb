@@ -11,34 +11,61 @@ module Dovado
         # The default base of a kilobyte.
         DEFAULT_KILO_BASE = 1024
 
+        attr_accessor :sim_id
+
         # Create a new Amount object.
         # 
-        # @param [Numeric] value value of this {Amount}.
+        # Note: You can set the default base for a kilobyte in the router
+        # admin interface to +1000+ or +1024+, you should use the same base here
+        # to get the right figures. The base can differ from one operator to
+        # another.
+        # 
+        # @param [Numeric] value value of this {Amount}, defaults to +0+.
         # @param [Integer] base the base of a kilobyte.
-        def initialize(value, base=DEFAULT_KILO_BASE)
+        def initialize(value=0, base=DEFAULT_KILO_BASE)
           raise ArgumentError.new "Argument is not numeric: #{value}" unless value.is_a? Numeric
           @value = value
           @base = base
         end
 
-        # The {Amount} in bytes
+        # The {Amount} in bytes.
         def bytes
           @value * @base
         end
 
-        # The {Amount} in kilobytes
+        # Shortcut to {#bytes}.
+        def b
+          bytes
+        end
+
+        # The {Amount} in kilobytes.
         def kilobytes
           @value
         end
 
-        # The {Amount} in megabytes
+        # Shortcut to {#kilobytes}.
+        def kb
+          kilobytes
+        end
+
+        # The {Amount} in megabytes.
         def megabytes
           (kilobytes / @base.to_f).round(2)
         end
 
-        # The {Amount} in gigabytes
+        # Shortcut to {#megabytes}.
+        def mb
+          megabytes
+        end
+
+        # The {Amount} in gigabytes.
         def gigabytes
           (megabytes / @base.to_f).round(2)
+        end
+
+        # Shortcut to {#gigabytes}.
+        def gb
+          gigabytes
         end
 
       end
@@ -47,7 +74,7 @@ module Dovado
       # 
       # @param [Numeric] value initial value of the {Amount}.
       # @param [Integer] base the base of a kilobyte.
-      def Amount(value, base=DEFAULT_KILO_BASE)
+      def Amount(value=0, base=DEFAULT_KILO_BASE)
         Amount.new(value, base)
       end
     end

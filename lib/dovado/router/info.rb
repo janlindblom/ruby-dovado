@@ -124,9 +124,22 @@ module Dovado
         end
       end
 
+      # Update the data in this {Info} object.
+      def update!
+        client = Actor[:client]
+        client.connect unless client.connected?
+        client.authenticate unless client.authenticated?
+        info = client.command('info')
+        create_from_string info
+      rescue ConnectionError => ex
+        Actor[:client].terminate
+        raise ex
+      end
+
       # Create a new {Info} object from a +String+.
       # 
       # @param [String] data_string router information string from the router.
+      # @api private
       def create_from_string(data_string=nil)
         unless Actor[:sms]
           Sms.supervise as: :sms, size: 1
@@ -263,6 +276,12 @@ module Dovado
 
       def connected_devices
         omni_method
+      end
+
+      # @api private
+      def self.setup_supervision!
+        return supervise as: :router_info, size: 1 unless Actor[:router_info]
+        return supervise as: :router_info, size: 1 if Actor[:router_info] and Actor[:router_info].dead?
       end
 
       private

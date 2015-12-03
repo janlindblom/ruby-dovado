@@ -29,15 +29,24 @@ describe Dovado::Router do
 
   it "can check the data traffic amounts", online: true do
     router_traffic = @router.traffic
-    expect(router_traffic.up).to be_a Dovado::Router::Traffic::Amount
-    expect(router_traffic.down).to be_a Dovado::Router::Traffic::Amount
-    expect(router_traffic.up.bytes).to be_a Integer
-    expect(router_traffic.down.bytes).to be_a Integer
-    expect(router_traffic.up.kilobytes).to be_a Integer
-    expect(router_traffic.down.kilobytes).to be_a Integer
-    expect(router_traffic.up.megabytes).to be_a Float
-    expect(router_traffic.down.megabytes).to be_a Float
-    expect(router_traffic.up.gigabytes).to be_a Float
-    expect(router_traffic.down.gigabytes).to be_a Float
+    traffic_up = nil
+    traffic_down = nil
+    if router_traffic.up.is_a? Dovado::Router::Traffic::Amount
+      traffic_up = router_traffic.up
+      traffic_down = router_traffic.down
+    elsif router_traffic.up.is_a? Array
+      traffic_up = router_traffic.up.first
+      traffic_down = router_traffic.down.first
+    end
+    expect(traffic_up).to be_a Dovado::Router::Traffic::Amount
+    expect(traffic_down).to be_a Dovado::Router::Traffic::Amount
+    expect(traffic_up.bytes).to be_a Integer
+    expect(traffic_down.bytes).to be_a Integer
+    expect(traffic_up.kilobytes).to be_a Integer
+    expect(traffic_down.kilobytes).to be_a Integer
+    expect(traffic_up.megabytes).to be_a Float
+    expect(traffic_down.megabytes).to be_a Float
+    expect(traffic_up.gigabytes).to be_a Float
+    expect(traffic_down.gigabytes).to be_a Float
   end
 end

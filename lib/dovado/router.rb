@@ -40,20 +40,15 @@ module Dovado
     # @return [Services] The {Services} object
     # @see {Services}
     def services
-      supervise_services
+      Services.setup_supervision!
       client = Actor[:client]
       router_services = Actor[:router_services]
 
-      unless router_services.valid?
-        client.connect unless client.connected?
-        client.authenticate unless client.authenticated?
-        string = client.command('services')
-        router_services.create_from_string string
-      end
+      router_services.update! unless router_services.valid?
 
       if router_services[:sms] == 'enabled'
         
-        Sms.supervise as: :sms, size: 1 unless Actor[:sms]
+        Sms.setup_supervision!
         sms.enabled = true
       end
       router_services
@@ -69,7 +64,7 @@ module Dovado
     # @return [Internet] the Internet Connection object.
     # @see {Internet}
     def internet
-      Internet.supervise as: :internet, size: 1 unless Actor[:internet]
+      Internet.setup_supervision!
       Actor[:internet]
     end
 
@@ -78,7 +73,7 @@ module Dovado
     # @return [Traffic] the Data Traffic object
     # @see {Traffic}
     def traffic
-      Traffic.supervise as: :traffic, size: 1 unless Actor[:traffic]
+      Traffic.setup_supervision!
       Actor[:traffic]
     end
 
@@ -87,16 +82,11 @@ module Dovado
     # @return [Info] The {Info} object.
     # @see {Info}
     def info
-      supervise_info
-      router_info = Actor[:router_info]
+      Info.setup_supervision!
       client = Actor[:client]
       router_info = Actor[:router_info]
-      unless router_info.valid?
-        client.connect unless client.connected?
-        client.authenticate unless client.authenticated?
-        info = client.command('info')
-        router_info.create_from_string info
-      end
+      router_info.update! unless router_info.valid?
+
       services
       router_info
     rescue ConnectionError => ex
@@ -117,11 +107,6 @@ module Dovado
 
     private
 
-    def supervise_services
-      return Services.supervise as: :router_services, size: 1 unless Actor[:router_services]
-      return Services.supervise as: :router_services, size: 1 if Actor[:router_services] and Actor[:router_services].dead?
-    end
-
     def supervise_client
       args = [{
         server:     @address,
@@ -132,11 +117,6 @@ module Dovado
 
       return Client.supervise as: :client, size: 1, args: args unless Actor[:client]
       return Client.supervise as: :client, size: 1, args: args if Actor[:router_services] and Actor[:router_services].dead?
-    end
-
-    def supervise_info
-      return Info.supervise as: :router_info, size: 1 unless Actor[:router_info]
-      return Info.supervise as: :router_info, size: 1 if Actor[:router_info] and Actor[:router_info].dead?
     end
 
   end
