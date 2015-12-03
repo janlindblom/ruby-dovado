@@ -11,6 +11,8 @@ module Dovado
         # The default base of a kilobyte.
         DEFAULT_KILO_BASE = 1024
 
+        attr_accessor :sim_id
+
         # Create a new Amount object.
         # 
         # Note: You can set the default base for a kilobyte in the router

@@ -4,11 +4,31 @@ module Dovado
   class Router
     # Traffic Counters.
     # 
+    # Returns the traffic counters from the router. The developer will have to
+    # check the return values to determine if there is traffic for multiple
+    # modems available, see {#up} and {#down}, this can be done by checking the
+    # type of the return value of these commands.
+    # 
+    # @example Single modem
+    #   single_modem_amount = @router.traffic.down
+    # 
+    # @example Two modems
+    #   first_modem_amount = @router.traffic.down.first
+    #   second_modem_amount = @router.traffic.down.last
+    # 
+    # @example Checking the return value to see if there are multiple modems
+    #   traffic_down = @router.traffic.down
+    #   if traffic_down.is_a? Dovado::Router::Traffic::Amount
+    #     return traffic_down.gigabytes
+    #   elsif traffic_down.is_a? Array
+    #     return traffic_down.first.gb + traffic_down.last.gb
+    #   end
+    # 
     # @since 1.0.3
     class Traffic
       include Celluloid
 
-      # Create a new {Internet} object.
+      # Create a new {Traffic} object.
       def initialize
         @data = ThreadSafe::Cache.new
         @client = Actor[:client] unless @client
@@ -19,7 +39,10 @@ module Dovado
 
       # Data upload traffic amount.
       # 
-      # @return [Amount] amount of uploaded data.
+      # If two modems are used, the returned value is an array with {Amount}
+      # objects.
+      # 
+      # @return [Amount, Array<Amount>] amount of uploaded data.
       def up
         update!
         @data[:up]
@@ -27,7 +50,10 @@ module Dovado
 
       # Data download traffic amount.
       # 
-      # @return [Amount] amount of downloaded data.
+      # If two modems are used, the returned value is an array with {Amount}
+      # objects.
+      # 
+      # @return [Amount, Array<Amount>] amount of downloaded data.
       def down
         update!
         @data[:down]
@@ -53,12 +79,10 @@ module Dovado
       def update!
         unless valid?
           begin
-            up, down = fetch_from_router
+            fetch_from_router
           rescue
-            up, down = fetch_from_router_info
+            @data[:up], @data[:down] = fetch_from_router_info
           end
-          @data[:down] = Traffic::Amount.new down
-          @data[:up] = Traffic::Amount.new up
           touch!
         end
       end
@@ -88,14 +112,42 @@ module Dovado
         client.connect unless client.connected?
         client.authenticate unless client.authenticated?
         string = client.command('traffic')
+        # Two Modems
+        multiple = string.match(/(\d+)\W(\d+)\W\/\W(\d+)\n(\d+)\W(\d+)\W\/\W(\d+)/)
+        # One Modem
         matched = string.match(/(\d+)\W(\d+)\W\/\W(\d+)/)
-        if matched
-          up = matched[3].to_i if matched[3]
-          down = matched[2].to_i if matched[2]
-        else
-          up, down = fetch_from_router_info
+        if multiple # Two modems found
+          if multiple[2]
+            down1 = Traffic::Amount.new matched[2].to_i
+            down1.sim_id = matched[1]
+          end
+          if multiple[3]
+            up1 = Traffic::Amount.new matched[3].to_i
+            up1.sim_id = matched[1]
+          end
+          if multiple[5]
+            down2 = Traffic::Amount.new matched[5].to_i
+            down2.sim_id = matched[4]
+          end
+          if multiple[6]
+            up2 = Traffic::Amount.new matched[6].to_i
+            up2.sim_id = matched[4]
+          end
+          @data[:up] = [up1, up2]
+          @data[:down] = [down1, down2]
+        elsif matched # only one modem found
+          if matched[2]
+            @data[:down] = Traffic::Amount.new matched[2].to_i
+            @data[:down].sim_id = matched[1]
+          end
+          if matched[3]
+            @data[:up] = Traffic::Amount.new matched[3].to_i
+            @data[:up].sim_id = matched[1]
+          end
+        else # Nothing found(?) return data from the Router::Info object
+          @data[:up], @data[:down] = fetch_from_router_info
         end
-        [up, down]
+        [@data[:up], @data[:down]]
       end
 
       def fetch_from_router_info
