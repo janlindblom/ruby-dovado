@@ -4,6 +4,7 @@ module Dovado
     # 
     # @since 1.0.0
     class Sms
+      # PLANNING issue:8 Enable creating and sending text messages.
       include Celluloid
 
       # Unread messages.
@@ -20,7 +21,7 @@ module Dovado
       attr_accessor :ids
 
       # Create a new {Sms} object.
-      # 
+      #
       # @param [Hash] args optional arguments.
       # @option args [Integer] :unread number of unread messages
       # @option args [Integer] :total total number of messages
@@ -38,21 +39,21 @@ module Dovado
       end
 
       # Text messages.
-      # 
+      #
       # @return [Sms::Messages]
       def messages
         Actor[:messages]
       end
 
       # Number of read messages.
-      # 
+      #
       # @return [Integer] the number of read messages.
       def read
         (@total - @unread)
       end
 
       # Assign number of read messages.
-      # 
+      #
       # @param [Integer] read Number of read messages.
       def read=(read=nil)
         @unread = (@total - read) unless read.nil?
@@ -60,7 +61,7 @@ module Dovado
 
       # Create a new {Sms} object from a +String+ with data fetched from the
       # router.
-      # 
+      #
       # @param [String] data_string String with text message data from the
       # router.
       # @api private

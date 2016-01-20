@@ -2,20 +2,20 @@ require 'net/telnet'
 
 module Dovado
   # Internal API client.
-  # 
+  #
   # @api private
   # @since 1.0.0
   class Client
     include Celluloid
 
     # Create a new {Client} object.
-    # 
+    #
     # The default options are:
     # - Address: 192.168.0.1
     # - Port: 6435
     # - User: admin
     # - Password: password
-    # 
+    #
     # @param [Hash] args option arguments.
     # @option args [String] :server The server (router) address.
     # @option args [Integer] :port The server (router) port.
@@ -36,7 +36,7 @@ module Dovado
     end
 
     # Run a command on the router.
-    # 
+    #
     # @param [String] text the command to run.
     # @raise [ConnectionError] if there is an error in the communication with
     #   the router.
@@ -87,7 +87,7 @@ module Dovado
     end
 
     # Check if we are connected to the router.
-    # 
+    #
     # @return [Boolean] +true+ or +false+.
     def connected?
       unless @server.nil?
@@ -98,7 +98,7 @@ module Dovado
     end
 
     # Authenticate user.
-    # 
+    #
     # @todo Verify authentication properly.
     # @raise [ConnectionError] if there is an error in the communication with
     #   the router.
@@ -116,7 +116,7 @@ module Dovado
     end
 
     # Check if we're authenticated.
-    # 
+    #
     # @return [Boolean] +true+ or +false+.
     def authenticated?
       @authenticated
@@ -141,8 +141,8 @@ module Dovado
           @server.cmd "user #{@user}"
           @server.waitfor />>\s/
           @server.cmd "pass #{@password}"
-        
-          # TODO: verify authentication for real.
+
+          # TODO: Verify authentication for real. How? Wait for a prompt or parse the response to a successful authentication.
           @authenticated = true
         else
           @authenticated = false

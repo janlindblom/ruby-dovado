@@ -1,13 +1,14 @@
 module Dovado
   # A Dovado Router.
-  # 
+  #
   # @since 1.0.0
   class Router
+    # TODO issue:9 Add support for home automation.
     include Celluloid
 
     # Create a new {Router} object representing an actual Dovado router on the local
     # network.
-    # 
+    #
     # The default router options are:
     # - Address: 192.168.0.1
     # - Port: 6435
@@ -36,7 +37,7 @@ module Dovado
     end
 
     # Fetch services information from the router.
-    # 
+    #
     # @return [Services] The {Services} object
     # @see {Services}
     def services
@@ -47,7 +48,7 @@ module Dovado
       router_services.update! unless router_services.valid?
 
       if router_services[:sms] == 'enabled'
-        
+
         Sms.setup_supervision!
         sms.enabled = true
       end
@@ -78,7 +79,7 @@ module Dovado
     end
 
     # Fetch information from the router.
-    # 
+    #
     # @return [Info] The {Info} object.
     # @see {Info}
     def info
@@ -97,7 +98,7 @@ module Dovado
     end
 
     # Fetch text messages from the router.
-    # 
+    #
     # @return [Sms] The {Sms} object.
     # @see {Sms}
     def sms

@@ -16,12 +16,12 @@ describe Dovado::Router do
       expect(router_info[key]).to_not be_nil
     end
   end
-  
+
   it "can check the router for available services", online: true do
     router_services = @router.services
     expect(router_services).to_not be_nil
   end
-  
+
   it "can check the router for text messages", online: true do
     router_sms = @router.sms
     expect(router_sms).to_not be_nil
