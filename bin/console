@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
-
 require "bundler/setup"
-require "ruby/dovado"
+
+require 'dotenv'
+Dotenv.load
+
+require "dovado"
 
 require "pry"
 Pry.start
-
