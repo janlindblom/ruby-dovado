@@ -3,9 +3,9 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Dovado::Router do
   @router = nil
   before(:context) do
-    address   = ENV['ROUTER_ADDRESS']   ? ENV['ROUTER_ADDRESS']   : '192.168.0.1'
-    user      = ENV['ROUTER_USER']      ? ENV['ROUTER_USER']      : 'admin'
-    password  = ENV['ROUTER_PASSWORD']  ? ENV['ROUTER_PASSWORD']  : 'password'
+    address   = ENV['DOVADO_ADDRESS']   ? ENV['DOVADO_ADDRESS']   : '192.168.0.1'
+    user      = ENV['DOVADO_USERNAME']  ? ENV['DOVADO_USERNAME']  : 'admin'
+    password  = ENV['DOVADO_PASSWORD']  ? ENV['DOVADO_PASSWORD']  : 'password'
     @router = Dovado::Router.new(address: address, user: user, password: password)
   end
 

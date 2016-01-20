@@ -14,18 +14,27 @@ module Dovado
     # - Port: 6435
     # - User: admin
     # - Password: password
-    # 
+    #
+    # These arguments can be passed through environment variables as well, by setting
+    # one or more of the following:
+    # - +DOVADO_ADDRESS+
+    # - +DOVADO_PORT+
+    # - +DOVADO_USER+
+    # - +DOVADO_PASSWORD+
+    #
     # @param [Hash] args optional arguments.
     # @option args [String] :address IP address or DNS name
     # @option args [Integer] :port Port which the router is listening on
     # @option args [String] :user User name
     # @option args [String] :password Password
     def initialize(args=nil)
-      @address    = '192.168.0.1' # Default address
-      @port       = 6435
-      @user        = "admin"       # Default username
-      @password    = "password"    # Default password
-      @connected  = false
+      # DOING issue:12 Add support for loading argunents from environment. DOING
+      @address      = ENV.has_key?('DOVADO_ADDRESS')  ? ENV['DOVADO_ADDRESS']   : '192.168.0.1' # Default address
+      @port         = ENV.has_key?('DOVADO_PORT')     ? ENV['DOVADO_PORT'].to_i : 6435
+      @user         = ENV.has_key?('DOVADO_USER')     ? ENV['DOVADO_USER']      : "admin"       # Default username
+      @password     = ENV.has_key?('DOVADO_PASSWORD') ? ENV['DOVADO_PASSWORD']  : "password"    # Default password
+      @connected    = false
+
       unless args.nil?
         @address  = args[:address]  if args.has_key? :address
         @port     = args[:port]     if args.has_key? :port
