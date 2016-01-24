@@ -5,7 +5,7 @@ module Dovado
     #
     # @since 1.0.5
     class Automation
-      # DOING:0 issue:9 Started work on automation features.
+      # DOING:0 issue:9 case:10993 Started work on automation features.
       include Celluloid
 
       # Defined groups on the router.

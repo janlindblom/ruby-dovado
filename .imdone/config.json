@@ -5,7 +5,11 @@
   "meta": {
     "issue": {
       "urlTemplate": "https://bitbucket.org/janlindblom/ruby-dovado/issues/%s",
-      "titleTemplate": "bitbucket issue #%s"
+      "titleTemplate": "Bitbucket issue #%s"
+    },
+    "case": {
+      "urlTemplate": "https://jaerto.fogbugz.com/?%s",
+      "titleTemplate": "FogBugz case %s"
     }
   },
   "watcher": true,
