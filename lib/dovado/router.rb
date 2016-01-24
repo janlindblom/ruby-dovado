@@ -3,7 +3,6 @@ module Dovado
   #
   # @since 1.0.0
   class Router
-    # TODO issue:9 Add support for home automation.
     include Celluloid
 
     # Create a new {Router} object representing an actual Dovado router on the local
@@ -67,6 +66,18 @@ module Dovado
       supervise_client
       supervise_services
       raise ex
+    end
+
+    # Fetch and control home automation features.
+    #
+    # @return [Automation] the {Automation} object
+    # @see {Automation}
+    # @since 1.0.5
+    def home_automation
+      Automation.setup_supervision!
+      client = Actor[:client]
+      automation = Actor[:home_automation]
+      automation.update! unless automation.valid?
     end
 
     # Get the Internet Connection object.
