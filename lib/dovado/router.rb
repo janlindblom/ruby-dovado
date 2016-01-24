@@ -28,7 +28,7 @@ module Dovado
     # @option args [String] :user User name
     # @option args [String] :password Password
     def initialize(args=nil)
-      # DOING issue:12 Add support for loading argunents from environment. DOING
+      # DONE issue:12 Add support for loading argunents from environment.
       @address      = ENV.has_key?('DOVADO_ADDRESS')  ? ENV['DOVADO_ADDRESS']   : '192.168.0.1' # Default address
       @port         = ENV.has_key?('DOVADO_PORT')     ? ENV['DOVADO_PORT'].to_i : 6435
       @user         = ENV.has_key?('DOVADO_USER')     ? ENV['DOVADO_USER']      : "admin"       # Default username
