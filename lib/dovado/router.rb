@@ -55,7 +55,7 @@ module Dovado
 
       router_services.update! unless router_services.valid?
 
-      if router_services[:sms] == 'enabled'
+      if router_services.sms?
 
         Sms.setup_supervision!
         sms.enabled = true
@@ -78,6 +78,13 @@ module Dovado
       client = Actor[:client]
       automation = Actor[:home_automation]
       automation.update! unless automation.valid?
+
+      automation
+    rescue ConnectionError => ex
+      Actor[:client].terminate
+      supervise_client
+      supervise_services
+      raise ex
     end
 
     # Get the Internet Connection object.
