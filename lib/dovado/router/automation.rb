@@ -22,7 +22,7 @@ module Dovado
       # Turn a device on or off.
       #
       # @param [String] device alias of device.
-      # @param [Symbol] either +:on+ or +:off+.
+      # @param [Symbol] on_off either +:on+ or +:off+.
       def turn(device=nil, on_off=:on)
         return if device.nil?
         direction = on_off == :on ? 'on' : 'off'

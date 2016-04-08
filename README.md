@@ -23,7 +23,7 @@ Add it to your Gemfile:
 gem "ruby-dovado"
 ```
 
-They load it in your code:
+Then load it in your code:
 
 ```ruby
 require "dovado"
@@ -41,6 +41,7 @@ The main elements available on the `router` object are:
 * `internet` - [Dovado::Router::Internet](http://www.rubydoc.info/gems/ruby-dovado/Dovado/Router/Internet)
 * `sms` - [Dovado::Router::Sms](http://www.rubydoc.info/gems/ruby-dovado/Dovado/Router/Sms)
 * `traffic` - [Dovado::Router::Traffic](http://www.rubydoc.info/gems/ruby-dovado/Dovado/Router/Traffic)
+* `home_automation` - [Dovado::Router::Automation](http://www.rubydoc.info/gems/ruby-dovado/Dovado/Router/Automation)
 
 For the full documentation, head over to [rubydoc.info](http://www.rubydoc.info/gems/ruby-dovado/frames).
 

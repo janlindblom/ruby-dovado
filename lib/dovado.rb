@@ -9,6 +9,7 @@ end
 
 require 'dovado/connection_error'
 require 'dovado/utilities'
+require 'dovado/client/command_error'
 require 'dovado/client'
 
 require 'dovado/router'
