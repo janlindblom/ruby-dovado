@@ -3,19 +3,19 @@ require 'dovado/router/traffic/amount'
 module Dovado
   class Router
     # Traffic Counters.
-    # 
+    #
     # Returns the traffic counters from the router. The developer will have to
     # check the return values to determine if there is traffic for multiple
     # modems available, see {#up} and {#down}, this can be done by checking the
     # type of the return value of these commands.
-    # 
+    #
     # @example Single modem
     #   single_modem_amount = @router.traffic.down
-    # 
+    #
     # @example Two modems
     #   first_modem_amount = @router.traffic.down.first
     #   second_modem_amount = @router.traffic.down.last
-    # 
+    #
     # @example Checking the return value to see if there are multiple modems
     #   traffic_down = @router.traffic.down
     #   if traffic_down.is_a? Dovado::Router::Traffic::Amount
@@ -23,7 +23,7 @@ module Dovado
     #   elsif traffic_down.is_a? Array
     #     return traffic_down.first.gb + traffic_down.last.gb
     #   end
-    # 
+    #
     # @since 1.0.3
     class Traffic
       include Celluloid
@@ -38,10 +38,10 @@ module Dovado
       end
 
       # Data upload traffic amount.
-      # 
+      #
       # If two modems are used, the returned value is an array with {Amount}
       # objects.
-      # 
+      #
       # @return [Amount, Array<Amount>] amount of uploaded data.
       def up
         update!
@@ -49,10 +49,10 @@ module Dovado
       end
 
       # Data download traffic amount.
-      # 
+      #
       # If two modems are used, the returned value is an array with {Amount}
       # objects.
-      # 
+      #
       # @return [Amount, Array<Amount>] amount of downloaded data.
       def down
         update!
@@ -60,7 +60,7 @@ module Dovado
       end
 
       # Data download total traffic amount. Useful with multiple modems.
-      # 
+      #
       # @return [Amount] total amount of downloaded data.
       def down_total
         up, down = update_total_traffic_from_router_info
@@ -68,7 +68,7 @@ module Dovado
       end
 
       # Data upload total traffic amount. Useful with multiple modems.
-      # 
+      #
       # @return [Amount] total amount of uploaded data.
       def up_total
         up, down = update_total_traffic_from_router_info
@@ -163,8 +163,8 @@ module Dovado
         Info.setup_supervision! unless Actor[:router_info]
         router_info = Actor[:router_info]
         router_info.update! unless router_info.valid?
-        down = router_info.traffic_modem_rx
-        up = router_info.traffic_modem_tx
+        down = Traffic::Amount.new router_info.traffic_modem_rx
+        up = Traffic::Amount.new router_info.traffic_modem_tx
         [up, down]
       end
 
