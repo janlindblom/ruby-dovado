@@ -28,11 +28,11 @@ module Dovado
     # @option args [String] :password Password
     def initialize(args=nil)
       # DONE issue:12 Add support for loading argunents from environment.
-      @address      = ENV.has_key?('DOVADO_ADDRESS')  ? ENV['DOVADO_ADDRESS']   : '192.168.0.1' # Default address
-      @port         = ENV.has_key?('DOVADO_PORT')     ? ENV['DOVADO_PORT'].to_i : 6435
-      @user         = ENV.has_key?('DOVADO_USER')     ? ENV['DOVADO_USER']      : "admin"       # Default username
-      @password     = ENV.has_key?('DOVADO_PASSWORD') ? ENV['DOVADO_PASSWORD']  : "password"    # Default password
-      @connected    = false
+      @address   = ENV.has_key?('DOVADO_ADDRESS')  ? ENV['DOVADO_ADDRESS']   : '192.168.0.1' # Default address
+      @port      = ENV.has_key?('DOVADO_PORT')     ? ENV['DOVADO_PORT'].to_i : 6435
+      @user      = ENV.has_key?('DOVADO_USER')     ? ENV['DOVADO_USER']      : "admin"       # Default username
+      @password  = ENV.has_key?('DOVADO_PASSWORD') ? ENV['DOVADO_PASSWORD']  : "password"    # Default password
+      @connected = false
 
       unless args.nil?
         @address  = args[:address]  if args.has_key? :address
@@ -85,6 +85,10 @@ module Dovado
       supervise_client
       supervise_services
       raise ex
+    end
+
+    def automation
+      home_automation
     end
 
     # Get the Internet Connection object.
