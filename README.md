@@ -51,13 +51,21 @@ Since the API published by these routers is Telnet-based, it stands to reason to
 
 Additionally, all replies are cached internally to limit the number of calls to the router API. This is done because the API is rather slow which would make any calls using this library wait for several seconds for a reply. These replies are cached inside Celluloid actors so that multiple, seemingly parallel requests will get the same response object. Caching can be overridden by forcing the call through to the router. Otherwise, the reply becomes invalid within a couple of seconds so that the next call will go through to the router and fetch any updates. Think of it as a cheap rate-limiter.
 
+## Limitations and Caveats
+
+The API on the router supports only one active user/connection at once and this library doesn't (yet) care about that. This means you *will* run into problems if you connect from two clients at once, there will be an error raised by the client that isn't rescued anywhere, essentially killing the Actor managing the client and resulting in any subsequent calls raising new errors.
+
+In a future version, this will most likely be fixed (by rescuing in the client and setting up a new Actor or something like that), but for now this is not really a priority for me. If you have a fix for it then by all means send me a pull request and I'll merge it.
+
+This is not a concern for multiple instances of a running Ruby app using the library from parallel threads though, only in the case of separate instances running separate clients.
+
 ## Copyright
 
-Ruby-Dovado © 2015 by [Jan Lindblom](mailto:janlindblom@fastmail.fm).
+Ruby-Dovado © 2015-2016 by [Jan Lindblom](mailto:janlindblom@fastmail.fm).
 Ruby-Dovado is licensed under the MIT license. Please see the
 {file:LICENSE.txt} file for more information.
 
-The Dovado, Dovado Tiny, Dovado Go, Dovado Tiny AC et.al brands are © 2004 - 2015 Dovado FZ-LLC.
+The Dovado, Dovado Tiny, Dovado Go, Dovado Tiny AC et.al brands are © 2004 - 2016 Dovado FZ-LLC.
 
 This library is neither endorsed nor supported by Dovado.
 

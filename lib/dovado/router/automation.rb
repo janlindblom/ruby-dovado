@@ -85,11 +85,13 @@ module Dovado
         data_array = data_string.split("\n")
         ao = nil
         go = nil
+        @list[list] = []
         @override_validation = true
+
         data_array.each do |data_entry|
           entry_array = data_entry.split('=')
           if entry_array.length == 2
-            key = entry_array[0].downcase
+            key = entry_array[0].strip.downcase
             val = entry_array[1].strip.match(/^\'(.*)\'$/)[1]
             keysym = Utilities.name_to_sym(key)
             if list == :aliases
@@ -124,6 +126,11 @@ module Dovado
               end
             end
           end
+        end
+        if list == :aliases
+          @list[list] << ao
+        elsif list == :groups
+          @list[list] << go
         end
         @override_validation = nil
         touch!
