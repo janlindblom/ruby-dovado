@@ -22,6 +22,7 @@ require 'dovado/router/info/operator'
 require 'dovado/router/info/operator/telia'
 
 require 'dovado/router/internet'
+require 'dovado/router/wifi'
 
 require 'dovado/router/traffic/amount'
 require 'dovado/router/traffic'

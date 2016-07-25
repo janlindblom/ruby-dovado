@@ -100,6 +100,15 @@ module Dovado
       Actor[:internet]
     end
 
+    # Get the Wifi object.
+    # @since 1.0.5
+    # @return [Wifi] the Wifi object.
+    # @see {Wifi}
+    def wifi
+      Wifi.setup_supervision!
+      Actor[:wifi]
+    end
+
     # Get the Data Traffic object.
     # @since 1.0.2
     # @return [Traffic] the Data Traffic object

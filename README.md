@@ -7,7 +7,7 @@ A Dovado Router API for Ruby.
 [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg?style=flat-square)](http://www.rubydoc.info/gems/ruby-dovado/frames)
 [![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg?style=flat-square)](#copyright)
 
-This library serves to enable easy access to the built in, Telnet-based, rudimentary API of the [routers from Dovado](http://www.dovado.com/en/products) running software version 7 and 8 (applies to the original Tiny, Go and Pro routers). It might work with the Tiny AC too but I have no means to test against that.
+This library serves to enable easy access to the built-in, Telnet-based, API of the [routers from Dovado](http://www.dovado.com/en/products) running software version 7 and 8 (applies to the original Tiny, Go and Pro routers). It might work with the new AC-series too but I have no means to test against that.
 
 ## Purpose
 
