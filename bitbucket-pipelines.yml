@@ -1,0 +1,10 @@
+image: ruby:2.1
+
+pipelines:
+  default:
+    - step:
+        script:
+          - bundler --version
+          - bundle install
+          - bundle exec rake spec:offline
+          - bundle exec rake build
