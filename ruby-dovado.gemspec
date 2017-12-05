@@ -3,6 +3,8 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'dovado/version'
 
+ruby_2_3_0_plus = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.3.0")
+
 Gem::Specification.new do |spec|
   spec.name          = "ruby-dovado"
   spec.version       = Dovado::VERSION
@@ -20,6 +22,9 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "celluloid", "~> 0.17"
   spec.add_runtime_dependency "thread_safe", "~> 0.3"
+  if ruby_2_3_0_plus
+    spec.add_runtime_dependency "net-telnet", "~> 0.1"
+  end
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "pry", "~> 0.10"
