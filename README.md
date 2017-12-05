@@ -2,6 +2,7 @@
 
 A Dovado Router API for Ruby.
 
+![Build Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiVm56aUlONWd6bVhhc1BCVjFhSStUOGlFZGM4VndqWHozc1NReUIwQVFrTmdJazJqS3VsVXF2ZzRBcGxxYzU4NmZjNXd0RlgxZHNOWGZKRXpQbmNGbnJnPSIsIml2UGFyYW1ldGVyU3BlYyI6Ikd1ZC9nc3VFbFNsdzZwOTAiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 [![Gem](https://img.shields.io/gem/v/ruby-dovado.png?style=flat-square)](https://rubygems.org/gems/ruby-dovado)
 [![Documentation](https://img.shields.io/badge/docs-rdoc.info-blue.png?style=flat-square)](http://www.rubydoc.info/gems/ruby-dovado/frames)
 [![License](https://img.shields.io/badge/license-MIT-yellowgreen.png?style=flat-square)](#copyright)
