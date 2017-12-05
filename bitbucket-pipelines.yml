@@ -3,8 +3,29 @@ image: ruby:2.1
 pipelines:
   default:
     - step:
-        script:
-          - bundler --version
-          - bundle install
-          - bundle exec rake spec:offline
-          - bundle exec rake build
+      name: Ruby 2.1
+      image: ruby:2.1
+      script:
+        - ruby --version
+        - bundler --version
+        - bundle install
+        - bundle exec rake spec:offline
+        - bundle exec rake build
+    - step:
+      name: Ruby 2.3
+      image: ruby:2.3
+      script:
+        - ruby --version
+        - bundler --version
+        - bundle install
+        - bundle exec rake spec:offline
+        - bundle exec rake build
+    - step:
+      name: Ruby 2.4
+      image: ruby:2.4
+      script:
+        - ruby --version
+        - bundler --version
+        - bundle install
+        - bundle exec rake spec:offline
+        - bundle exec rake build
