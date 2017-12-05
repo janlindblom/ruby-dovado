@@ -7,7 +7,7 @@ pipelines:
         image: ruby:2.1
         script:
           - ruby --version
-          - bundler --version
+          - bundle --version
           - bundle install
           - bundle exec rake spec:offline
           - bundle exec rake build
@@ -16,7 +16,7 @@ pipelines:
         image: ruby:2.3
         script:
           - ruby --version
-          - bundler --version
+          - bundle --version
           - bundle install
           - bundle exec rake spec:offline
           - bundle exec rake build
@@ -25,7 +25,7 @@ pipelines:
         image: ruby:2.4
         script:
           - ruby --version
-          - bundler --version
+          - bundle --version
           - bundle install
           - bundle exec rake spec:offline
           - bundle exec rake build
