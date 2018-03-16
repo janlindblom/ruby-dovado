@@ -1,31 +1,67 @@
 image: ruby:2.1
 
+definitions:
+  caches:
+    bundler: vendor/bundle
+
 pipelines:
+  branches:
+    master:
+      - step:
+          name: Build master branch
+          image: ruby:2.4
+          caches:
+            - bundler
+          script:
+            - ruby --version
+            - bundle --version
+            - bundle install --path vendor/bundle
+            - bundle exec rake build
+          artifacts:
+            - pkg/**
+  tags:
+    v1.0*:
+      - step:
+          name: Build tagged 1.0 version
+          image: ruby:2.1
+          caches:
+            - bundler
+          script:
+            - ruby --version
+            - bundle --version
+            - bundle install --path vendor/bundle
+            - bundle exec rake build
+          artifacts:
+            - pkg/**
+
   default:
     - step:
         name: Ruby 2.1
         image: ruby:2.1
+        caches:
+          - bundler
         script:
           - ruby --version
           - bundle --version
-          - bundle install
+          - bundle install --path vendor/bundle
           - bundle exec rake spec:offline
-          - bundle exec rake build
     - step:
         name: Ruby 2.3
         image: ruby:2.3
+        caches:
+          - bundler
         script:
           - ruby --version
           - bundle --version
-          - bundle install
+          - bundle install --path vendor/bundle
           - bundle exec rake spec:offline
-          - bundle exec rake build
     - step:
         name: Ruby 2.4
         image: ruby:2.4
+        caches:
+          - bundler
         script:
           - ruby --version
           - bundle --version
-          - bundle install
+          - bundle install --path vendor/bundle
           - bundle exec rake spec:offline
-          - bundle exec rake build
