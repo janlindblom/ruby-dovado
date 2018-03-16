@@ -131,7 +131,7 @@ module Dovado
       services
       router_info
     rescue ConnectionError => ex
-      Actor[:client].terminate
+      #Actor[:client].terminate if Actor[:router_info] and !Actor[:router_info].dead?
       supervise_client
       supervise_info
       raise ex
@@ -160,5 +160,8 @@ module Dovado
       return Client.supervise as: :client, size: 1, args: args if Actor[:router_services] and Actor[:router_services].dead?
     end
 
+    def supervise_info
+      Dovado::Router::Info.setup_supervision!
+    end
   end
 end

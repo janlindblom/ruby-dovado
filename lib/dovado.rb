@@ -20,6 +20,7 @@ require 'dovado/router/info'
 require 'dovado/router/info/signal'
 require 'dovado/router/info/operator'
 require 'dovado/router/info/operator/telia'
+require 'dovado/router/info/operator/alcom'
 
 require 'dovado/router/internet'
 require 'dovado/router/wifi'
