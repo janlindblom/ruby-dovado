@@ -13,7 +13,8 @@ module Dovado
           def initialize
             # PLANNING Add known commands and replies from Ålcom.
             super(name: "Ålcom", number: "s12192", commands: {
-              balance: 'saldo'.encode('UTF-8')
+              balance: 'saldo'.encode('UTF-8'),
+              data_remaining: 'datamängd'.encode('UTF-8')
               })
           end
 
