@@ -44,6 +44,13 @@ module Dovado
           home_automation.dimot(start_level, stop_level, duration)
         end
 
+        # Checks if this {Alias} object is valid.
+        #
+        # @return [Boolean] +true+ or +false+.
+        def valid?
+
+        end
+
         private
 
         def home_automation

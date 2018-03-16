@@ -41,3 +41,19 @@ describe Dovado::Router::Info::Operator::Telia do
     expect(@operator.number).to be_a String
   end
 end
+
+describe Dovado::Router::Info::Operator::Alcom do
+  before(:context) do
+    @operator = Dovado::Router::Info::Operator::Alcom.new
+  end
+  it "has commands", offline: true do
+    expect(@operator.commands).to_not be_nil
+    expect(@operator.commands).to be_a Hash
+  end
+  it "has a name", offline: true do
+    expect(@operator.name).to be_a String
+  end
+  it "has a number", offline: true do
+    expect(@operator.number).to be_a String
+  end
+end

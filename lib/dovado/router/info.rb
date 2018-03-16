@@ -7,19 +7,19 @@ require 'thread_safe'
 module Dovado
   class Router
     # Router information.
-    # 
+    #
     # @since 1.0.0
     class Info
       include Celluloid
 
       # Get the product name
-      # 
+      #
       # @return [String] product name
       # @since 1.0.3
       attr_reader :product_name
 
       # Get the current signal strength information
-      # 
+      #
       # @return [Info::Signal] current signal strength information
       # @since 1.0.3
       # @see {Info::Signal}
@@ -27,92 +27,92 @@ module Dovado
 
       # Get the number of kilobytes sent to the internet since last traffic
       # counter reset.
-      # 
+      #
       # @return [Integer] number of kilobytes sent to the internet
       # @since 1.0.3
       attr_reader :traffic_modem_tx
 
       # Get the number of kilobytes read from the internet since last traffic
       # counter reset.
-      # 
+      #
       # @return [Integer] number of kilobytes read from the internet
       # @since 1.0.3
       attr_reader :traffic_modem_rx
 
       # Get the currently active connection
-      # 
+      #
       # @return [String] the port currently active as internet connection
       # @since 1.0.3
       attr_reader :connection
 
       # Get the current state of the connected modem
-      # 
+      #
       # @return [String] current state of the connected modem
       # @since 1.0.3
       attr_reader :modem_status
 
       # Get the external IP address of the router
-      # 
+      #
       # @return [IPAddr] external IP address
       # @since 1.0.3
       attr_reader :external_ip
 
       # Get the current date on the router
-      # 
+      #
       # @return [Date] current date
       # @since 1.0.3
       attr_reader :date
 
       # Get the current time on the router
-      # 
+      #
       # @return [Time] current time
       # @since 1.0.3
       attr_reader :time
 
       # Get the GPS type
-      # 
+      #
       # @return [String] the type of GPS
       # @since 1.0.3
       attr_reader :gps_type
 
       # Get the GPS latitude
-      # 
+      #
       # @return [Float] GPS latitude
       # @since 1.0.3
       attr_reader :gps_lat
 
       # Get the GPS longitude
-      # 
+      #
       # @return [Float] GPS longitude
       # @since 1.0.3
       attr_reader :gps_long
 
       # Get the sunrise at the current location
-      # 
+      #
       # @return [Time] sunrise at the current location
       # @since 1.0.3
       attr_reader :sunrise
 
       # Get sunset at the current location
-      # 
+      #
       # @return [Time] sunset at the current location
       # @since 1.0.3
       attr_reader :sunset
 
       # Get the sms object
-      # 
+      #
       # @return [Sms] the sms object
       # @since 1.0.3
       attr_reader :sms
 
       # Get connected devices
-      # 
+      #
       # @return [Array<String>] an array with connected devices
       # @since 1.0.3
       attr_reader :connected_devices
 
       # Create a new {Info} object.
-      # 
+      #
       # @param [Hash] args optional hash to initialize with.
       def initialize(args=nil)
         # Defaults
@@ -132,12 +132,12 @@ module Dovado
         info = client.command('info')
         create_from_string info
       rescue ConnectionError => ex
-        Actor[:client].terminate
+        #Actor[:client].terminate
         raise ex
       end
 
       # Create a new {Info} object from a +String+.
-      # 
+      #
       # @param [String] data_string router information string from the router.
       # @api private
       def create_from_string(data_string=nil)
@@ -156,7 +156,10 @@ module Dovado
             when 'traffic_modem_tx', 'traffic_modem_rx'
               @data[keysym] = val.strip.to_i
             when 'time', 'sunset', 'sunrise'
-              @data[keysym] = Time.parse(val.strip)
+              # Catch an edge case
+              unless val.strip == "Unknown:Unknown"
+                @data[keysym] = Time.parse(val.strip)
+              end
             when 'date'
               @data[:date] = Date.parse(val.strip)
             when 'sms_unread'
@@ -193,21 +196,21 @@ module Dovado
       end
 
       # Fetch an entry from the {Info} object.
-      # 
+      #
       # @param [Symbol] key The key to fetch.
       def [](key)
         @data[key]
       end
 
       # Fetch the list of entries in the {Info} object.
-      # 
+      #
       # @return [Array<Symbol>]
       def keys
         @data.keys
       end
 
       # Check if the {Info} object has a given key.
-      # 
+      #
       # @param [Symbol] key the key to check for.
       # @return [Boolean] +true+ or +false+
       def has_key?(key)
