@@ -1,3 +1,5 @@
+require 'dovado/router/automation/protocol'
+
 module Dovado
   class Router
     class Automation
@@ -6,12 +8,16 @@ module Dovado
         attr_accessor :protocol
         attr_accessor :data
 
+        # Create a new Automation Alias object.
         def initialize(args=nil)
+          @data = {}
           unless args.nil?
             @id = args[:id] if args.key? :id
             @protocol = args[:protocol] if args.key? :protocol
+            if args.key? :data
+              @data = args[:data]
+            end
           end
-          @data = {}
         end
 
         def turn_on

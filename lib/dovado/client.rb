@@ -47,7 +47,7 @@ module Dovado
       connect unless connected?
       authenticate unless authenticated?
       perform_command text
-    rescue Net::ReadTimeout => ex
+    rescue Net::ReadTimeout
       disconnect
       connect unless connected?
       authenticate unless authenticated?
@@ -139,7 +139,7 @@ module Dovado
           raise ArgumentError.new "Password cannot be nil" if @password.nil?
 
           @server.cmd "user #{@user}"
-          @server.waitfor />>\s/
+          @server.waitfor(/>>\s/)
           @server.cmd "pass #{@password}"
 
           # TODO: Verify authentication for real. How? Wait for a prompt or parse the response to a successful authentication.

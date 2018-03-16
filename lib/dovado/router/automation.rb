@@ -1,3 +1,6 @@
+require "dovado/router/automation/protocol"
+require "dovado/router/automation/alias"
+require "dovado/router/automation/group"
 
 module Dovado
   class Router
@@ -5,7 +8,6 @@ module Dovado
     #
     # @since 1.0.5
     class Automation
-      # DOING:0 issue:9 case:10993 Started work on automation features.
       include Celluloid
 
       # Defined groups on the router.
@@ -17,6 +19,12 @@ module Dovado
       # Create a new Automation object.
       def initialize
         @list = {aliases: [], groups: []}
+      end
+
+      # Add an {Alias} object to the {Dovado::Router}.
+      def add(device=nil, protocol=nil, house=nil, channel=nil)
+        client.command("ts add #{device} #{protocol} #{house} #{channel}")
+        ao = Dovado::Router::Automation::Alias.new(id: device, protocol: protocol)
       end
 
       # Turn a device on or off.
@@ -104,7 +112,7 @@ module Dovado
                 ao.id = val
               elsif key.match(/protocol/)
                 # state 2
-                ao.protocol = val
+                ao.protocol = Dovado::Router::Automation::Protocol.create_from_string(val)
               else
                 # state 3
                 ao.data[keysym] = val
