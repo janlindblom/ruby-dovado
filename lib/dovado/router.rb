@@ -5,8 +5,8 @@ module Dovado
   class Router
     include Celluloid
 
-    # Create a new {Router} object representing an actual Dovado router on the local
-    # network.
+    # Create a new {Router} object representing an actual Dovado router on the
+    #   local network.
     #
     # The default router options are:
     # - Address: 192.168.0.1
@@ -14,8 +14,9 @@ module Dovado
     # - User: admin
     # - Password: password
     #
-    # These arguments can be passed through environment variables as well, by setting
-    # one or more of the following:
+    # These arguments can be passed through environment variables as well, by
+    #   setting one or more of the following:
+    #
     # - +DOVADO_ADDRESS+
     # - +DOVADO_PORT+
     # - +DOVADO_USER+
@@ -27,19 +28,17 @@ module Dovado
     # @option args [String] :user User name
     # @option args [String] :password Password
     def initialize(args = nil)
-      # DONE issue:12 Add support for loading argunents from environment.
-      @address = ENV.key?('DOVADO_ADDRESS') ? ENV['DOVADO_ADDRESS'] : '192.168.0.1' # Default address
-      @port = ENV.key?('DOVADO_PORT') ? ENV['DOVADO_PORT'].to_i : 6435
-      @user = ENV.key?('DOVADO_USER') ? ENV['DOVADO_USER'] : 'admin' # Default username
-      @password = ENV.key?('DOVADO_PASSWORD') ? ENV['DOVADO_PASSWORD'] : 'password' # Default password
+      # Default address or from ENV
+      @address = ENV.fetch('DOVADO_ADDRESS', '192.168.0.1')
+      # Default port or from ENV
+      @port = ENV.fetch('DOVADO_PORT', 6435).to_i
+      # Default username or from ENV
+      @user = ENV.fetch('DOVADO_USER', 'admin')
+      # Default password or from ENV
+      @password = ENV.fetch('DOVADO_PASSWORD', 'password')
       @connected = false
 
-      unless args.nil?
-        @address  = args[:address]  if args.key? :address
-        @port     = args[:port]     if args.key? :port
-        @user      = args[:user]     if args.key? :user
-        @password  = args[:password] if args.key? :password
-      end
+      process_args(args) unless args.nil?
 
       supervise_client
     end
@@ -50,17 +49,9 @@ module Dovado
     # @see {Services}
     def services
       Services.setup_supervision!
-      client = Actor[:client]
-      router_services = Actor[:router_services]
-
-      router_services.update! unless router_services.valid?
-
-      if router_services.sms?
-
-        Sms.setup_supervision!
-        sms.enabled = true
-      end
-      router_services
+      Actor[:router_services].update! unless Actor[:router_services].valid?
+      supervise_sms if Actor[:router_services].sms?
+      Actor[:router_services]
     rescue ConnectionError => ex
       Actor[:client].terminate
       supervise_client
@@ -75,7 +66,6 @@ module Dovado
     # @since 1.0.5
     def home_automation
       Automation.setup_supervision!
-      client = Actor[:client]
       automation = Actor[:home_automation]
       automation.update! unless automation.valid?
 
@@ -124,14 +114,12 @@ module Dovado
     # @see {Info}
     def info
       Info.setup_supervision!
-      client = Actor[:client]
       router_info = Actor[:router_info]
       router_info.update! unless router_info.valid?
 
       services
       router_info
     rescue ConnectionError => ex
-      # Actor[:client].terminate if Actor[:router_info] and !Actor[:router_info].dead?
       supervise_client
       supervise_info
       raise ex
@@ -148,6 +136,13 @@ module Dovado
 
     private
 
+    def process_args(args)
+      @address = args[:address] if args.key? :address
+      @port = args[:port] if args.key? :port
+      @user = args[:user] if args.key? :user
+      @password = args[:password] if args.key? :password
+    end
+
     def supervise_client
       args = [{
         server:     @address,
@@ -156,12 +151,25 @@ module Dovado
         password:   @password
       }]
 
-      return Client.supervise as: :client, size: 1, args: args unless Actor[:client]
-      return Client.supervise as: :client, size: 1, args: args if Actor[:router_services] && Actor[:router_services].dead?
+      return supervised_client(args) unless Actor[:client]
+      return supervised_client(args) if services_actor_is_dead?
     end
 
     def supervise_info
       Dovado::Router::Info.setup_supervision!
+    end
+
+    def supervise_sms
+      Sms.setup_supervision!
+      sms.enabled = true
+    end
+
+    def supervised_client(args)
+      Client.supervise as: :client, size: 1, args: args
+    end
+
+    def services_actor_is_dead?
+      Actor[:router_services] && Actor[:router_services].dead?
     end
   end
 end

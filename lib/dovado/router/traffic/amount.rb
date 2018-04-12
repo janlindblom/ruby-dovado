@@ -22,7 +22,7 @@ module Dovado
         # @param [Numeric] value value of this {Amount}, defaults to +0+.
         # @param [Integer] base the base of a kilobyte.
         def initialize(value = 0, base = DEFAULT_KILO_BASE)
-          raise ArgumentError, "Argument is not numeric: #{value}" unless value.is_a? Numeric
+          enforce_numeric_value(value)
           @value = value.to_i
           @base = base
         end
@@ -66,14 +66,13 @@ module Dovado
         def gb
           gigabytes
         end
-      end
 
-      # Create a new {Amount} object.
-      #
-      # @param [Numeric] value initial value of the {Amount}.
-      # @param [Integer] base the base of a kilobyte.
-      def Amount(value = 0, base = DEFAULT_KILO_BASE)
-        Amount.new(value, base)
+        private
+
+        def enforce_numeric_value(value)
+          error = ArgumentError, "Argument is not numeric: #{value}"
+          raise error unless value.is_a? Numeric
+        end
       end
     end
   end

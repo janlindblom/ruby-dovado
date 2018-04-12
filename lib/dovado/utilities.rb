@@ -16,25 +16,33 @@ module Dovado
 
     # Build a sentence from an array.
     #
-    # Ported from ActiveSupport:
-    # - File activesupport/lib/active_support/core_ext/array/conversions.rb, line 59
+    # Ported from ActiveSupport in file:
+    # - activesupport/lib/active_support/core_ext/array/conversions.rb
     #
     # @param [Array] ary the +Array+ to make a sentence of.
     # @param [Hash] options optional settings.
     # @option options [String] :words_connector
     # @option options [String] :two_words_connector
     # @option options [String] :last_word_connector
-    def self.array_to_sentence(ary, options = { words_connector: ', ', two_words_connector: ' and ', last_word_connector: ' and ' })
+    def self.array_to_sentence(ary, options = a2s_default_options)
+      return '' if ary.length.zero?
       case ary.length
-      when 0
-        ''
       when 1
         ary[0].to_s.dup
       when 2
         "#{ary[0]}#{options[:two_words_connector]}#{ary[1]}"
       else
-        "#{ary[0...-1].join(options[:words_connector])}#{options[:last_word_connector]}#{ary[-1]}"
+        lwc = options[:last_word_connector]
+        "#{ary[0...-1].join(options[:words_connector])}#{lwc}#{ary[-1]}"
       end
+    end
+
+    private_class_method def self.a2s_default_options
+      {
+        words_connector: ', ',
+        two_words_connector: ' and ',
+        last_word_connector: ' and '
+      }
     end
   end
 end

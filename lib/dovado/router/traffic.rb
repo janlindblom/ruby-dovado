@@ -63,7 +63,7 @@ module Dovado
       #
       # @return [Amount] total amount of downloaded data.
       def down_total
-        up, down = update_total_traffic_from_router_info
+        _up, down = update_total_traffic_from_router_info
         Traffic::Amount.new down
       end
 
@@ -71,20 +71,17 @@ module Dovado
       #
       # @return [Amount] total amount of uploaded data.
       def up_total
-        up, down = update_total_traffic_from_router_info
+        up, _down = update_total_traffic_from_router_info
         Traffic::Amount.new up
       end
 
       # Update the data in this {Traffic} object.
       def update!
-        unless valid?
-          begin
-            fetch_from_router
-          rescue StandardError
-            @data[:up], @data[:down] = fetch_from_router_info
-          end
-          touch!
-        end
+        fetch_from_router unless valid?
+        touch!
+      rescue StandardError
+        @data[:up], @data[:down] = fetch_from_router_info
+        touch!
       end
 
       # Determine if this traffic object is valid.
@@ -102,62 +99,68 @@ module Dovado
 
       private
 
+      def setup_client!
+        @client = Actor[:client]
+        @client.connect unless @client.connected?
+        @client.authenticate unless @client.authenticated?
+      end
+
       def touch!
         @last_update = Time.now.to_i
       end
 
       def fetch_from_router
-        up = @data[:up]
-        down = @data[:down]
-        client = Actor[:client]
-        client.connect unless client.connected?
-        client.authenticate unless client.authenticated?
-        string = client.command('traffic')
-        # Two Modems
-        multiple = string.match(/(\d+)\W(\d+)\W\/\W(\d+)\n(\d+)\W(\d+)\W\/\W(\d+)/)
-        # One Modem
-        matched = string.match(/(\d+)\W(\d+)\W\/\W(\d+)/)
-        if multiple # Two modems found
-          if multiple[2]
-            down1 = Traffic::Amount.new matched[2].to_i
-            down1.sim_id = matched[1]
-          end
-          if multiple[3]
-            up1 = Traffic::Amount.new matched[3].to_i
-            up1.sim_id = matched[1]
-          end
-          if multiple[5]
-            down2 = Traffic::Amount.new matched[5].to_i
-            down2.sim_id = matched[4]
-          end
-          if multiple[6]
-            up2 = Traffic::Amount.new matched[6].to_i
-            up2.sim_id = matched[4]
-          end
-          @data[:up] = [up1, up2]
-          @data[:down] = [down1, down2]
-        elsif matched # only one modem found
-          if matched[2]
-            @data[:down] = Traffic::Amount.new matched[2].to_i
-            @data[:down].sim_id = matched[1]
-          end
-          if matched[3]
-            @data[:up] = Traffic::Amount.new matched[3].to_i
-            @data[:up].sim_id = matched[1]
-          end
-        else # Nothing found(?) return data from the Router::Info object
-          @data[:up], @data[:down] = fetch_from_router_info
-        end
+        setup_client!
+        string = @client.command('traffic')
+
+        # Two Modems Check
+        multiple = string.match(muliple_modems_regex)
+        # One Modem Check
+        matched = string.match(one_modem_regex)
+        # Two modems found:
+        process_multiple_modems_traffic!(multiple) if multiple
+        # only one modem found:
+        process_single_modem_traffic!(matched) if matched
+
+        # Nothing found(?) return data from the Router::Info object
+        match = multiple || matched
+        @data[:up], @data[:down] = fetch_from_router_info unless match
+
         [@data[:up], @data[:down]]
+      end
+
+      def process_multiple_modems_traffic!(multiple)
+        @data[:up] = [setup_match(multiple[3], multiple[1]),
+                      setup_match(multiple[6], multiple[4])]
+        @data[:down] = [setup_match(multiple[2], multiple[1]),
+                        setup_match(multiple[5], multiple[4])]
+      end
+
+      def process_single_modem_traffic!(matched)
+        @data[:down] = setup_match(matched[2], matched[1]) if matched[2]
+        @data[:up] = setup_match(matched[3], matched[1]) if matched[3]
+      end
+
+      def setup_match(amount, sim_id)
+        amount_object = Traffic::Amount.new amount.to_i
+        amount_object.sim_id = sim_id
+        amount_object
+      end
+
+      def muliple_modems_regex
+        %r{(\d+)\W(\d+)\W\/\W(\d+)\n(\d+)\W(\d+)\W\/\W(\d+)}
+      end
+
+      def one_modem_regex
+        %r{(\d+)\W(\d+)\W\/\W(\d+)}
       end
 
       def fetch_from_router_info
         up = @data[:up]
         down = @data[:down]
-        begin
-          up, down = update_total_traffic_from_router_info
-        rescue Exception
-        end
+        up, down = update_total_traffic_from_router_info
+        [up, down]
+      rescue StandardError
         [up, down]
       end
 

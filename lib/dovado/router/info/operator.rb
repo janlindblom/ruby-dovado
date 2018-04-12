@@ -42,21 +42,7 @@ module Dovado
         # @option args [Hash] :commands Supported commands.
         def initialize(args = nil)
           self.name = 'Unknown'
-          unless args.nil?
-            @number = ''
-            @name = 'NoOperator'
-            @commands = Operator.default_commands
-            @number =   args[:number]   unless args[:number].nil?
-            @name =     args[:name]     unless args[:name].nil?
-            unless args[:commands].nil?
-              missing_keys = []
-              Operator.required_commands.each do |req|
-                missing_keys << req unless args[:commands].key?(req)
-              end
-              raise ArgumentError, "Missing required keys in hash: #{Utilities.array_to_sentence(missing_keys)}" unless missing_keys.empty?
-              @commands = args[:commands]
-            end
-          end
+          prepare_args(args) unless args.nil?
         end
 
         # Default commands for an operator.
@@ -69,6 +55,30 @@ module Dovado
         end
 
         private
+
+        def prepare_args(args)
+          @number = ''
+          @name = 'NoOperator'
+          @commands = Operator.default_commands
+          @number = args[:number] unless args[:number].nil?
+          @name = args[:name] unless args[:name].nil?
+          check_for_missing_keys(args[:commands]) unless args[:commands].nil?
+          @commands = args[:commands]
+        end
+
+        def check_for_missing_keys(commands)
+          missing_keys = []
+          Operator.required_commands.each do |req|
+            missing_keys << req unless commands.key?(req)
+          end
+          raise_missing_keys_error(missing_keys) unless missing_keys.empty?
+          missing_keys
+        end
+
+        def raise_missing_keys_error(missing_keys)
+          missing = Utilities.array_to_sentence(missing_keys)
+          raise ArgumentError, "Missing required keys in hash: #{missing}"
+        end
 
         def self.required_commands
           [

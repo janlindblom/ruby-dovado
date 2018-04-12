@@ -9,12 +9,6 @@ module Dovado
     class Services
       include Celluloid
 
-      # Get status of sms service
-      #
-      # @return [String] a string with "enabled" or "disabled"
-      # @since 1.0.3
-      attr_reader :sms
-
       # Get status of home automation service
       #
       # @return [String] a string with "enabled" or "disabled"
@@ -28,9 +22,7 @@ module Dovado
         @list = ThreadSafe::Cache.new
         @last_update = nil
         unless args.nil?
-          args.each do |k, v|
-            @list[Utilities.name_to_sym(k)] = v
-          end
+          args.each { |k, v| @list[Utilities.name_to_sym(k)] = v }
           touch!
         end
       end
@@ -81,7 +73,7 @@ module Dovado
       #
       # @param [Symbol] key the key to check for.
       # @return [Boolean] +true+ or +false+
-      def has_key?(key)
+      def key?(key)
         keys.member?(key)
       end
 
@@ -93,6 +85,10 @@ module Dovado
         (@last_update + SecureRandom.random_number(9) + 1 <= Time.now.to_i)
       end
 
+      # Get status of sms service
+      #
+      # @return [String] a string with "enabled" or "disabled"
+      # @since 1.0.3
       def sms
         @list[:sms] if key? :sms
       end

@@ -27,7 +27,6 @@ module Dovado
       # @option args [Integer] :total total number of messages
       def initialize(args = nil)
         Messages.supervise as: :messages, size: 1
-        messages = Actor[:messages]
         @enabled = false
         @ids = ThreadSafe::Array.new
         unless args.nil?
@@ -69,31 +68,48 @@ module Dovado
         data_array = data_string.split("\n")
         data_array.each do |data_entry|
           entry_array = data_entry.split(':')
-          next unless entry_array.length == 2
-          key = entry_array[0].downcase
-          val = entry_array[1]
-          next unless key.downcase.tr(' ', '_') == 'stored_ids'
-          idlist = val.split(' ')
-          idlist.each do |id|
-            @ids << id
-          end
+          process_entry_array!(entry_array) if entry_array.length == 2
         end
-        @ids.map!(&:to_i).sort!
+        @ids.reject!(&:nil?)
+        @ids.map!(&:to_i)
+        @ids.sort!
       end
 
       # Load text messages.
-      def load_messages
-        client = Actor[:client]
-        messages = Actor[:messages]
-        client.connect unless client.connected?
-        client.authenticate unless client.authenticated?
+      #
+      # This is not done automatically since it's a rather time consuming
+      #   operation.
+      def load_messages!
+        client = setup_client
+
         @ids.each do |id|
-          messages.add_message Message.from_string(client.command("sms recvtxt #{id}"))
+          command = client.command("sms recvtxt #{id}")
+          messages.add_message Message.from_string(command)
         end
+        true
+      rescue StandardError
+        false
       end
 
       def self.setup_supervision!
         supervise as: :sms, size: 1 unless Actor[:sms]
+      end
+
+      private
+
+      def process_entry_array!(entry_array)
+        key = entry_array[0].downcase.tr(' ', '_')
+        val = entry_array[1]
+        val.split(' ').each { |id|
+          @ids << id unless id.nil?
+          } if key == 'stored_ids'
+      end
+
+      def setup_client
+        client = Actor[:client]
+        client.connect unless client.connected?
+        client.authenticate unless client.authenticated?
+        client
       end
     end
   end

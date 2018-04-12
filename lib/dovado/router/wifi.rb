@@ -18,7 +18,7 @@ module Dovado
         client.connect unless client.connected?
         client.authenticate unless client.authenticated?
         client.command('wifi on')
-        status = :on
+        self.status = :on
       end
 
       # Disable Wifi.
@@ -27,7 +27,7 @@ module Dovado
         client.connect unless client.connected?
         client.authenticate unless client.authenticated?
         client.command('wifi off')
-        status = :off
+        self.status = :off
       end
 
       # Check if Wifi is on.
