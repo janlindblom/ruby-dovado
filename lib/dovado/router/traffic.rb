@@ -31,7 +31,7 @@ module Dovado
       # Create a new {Traffic} object.
       def initialize
         @data = ThreadSafe::Cache.new
-        @client = Actor[:client] unless @client
+        @client ||= Actor[:client]
         @last_update = nil
         @data[:down] = Traffic::Amount.new
         @data[:up] = Traffic::Amount.new
@@ -80,7 +80,7 @@ module Dovado
         unless valid?
           begin
             fetch_from_router
-          rescue
+          rescue StandardError
             @data[:up], @data[:down] = fetch_from_router_info
           end
           touch!
@@ -107,7 +107,8 @@ module Dovado
       end
 
       def fetch_from_router
-        up, down = [@data[:up], @data[:down]]
+        up = @data[:up]
+        down = @data[:down]
         client = Actor[:client]
         client.connect unless client.connected?
         client.authenticate unless client.authenticated?
@@ -151,7 +152,8 @@ module Dovado
       end
 
       def fetch_from_router_info
-        up, down = [@data[:up], @data[:down]]
+        up = @data[:up]
+        down = @data[:down]
         begin
           up, down = update_total_traffic_from_router_info
         rescue Exception
@@ -167,7 +169,6 @@ module Dovado
         up = Traffic::Amount.new router_info.traffic_modem_tx
         [up, down]
       end
-
     end
   end
 end

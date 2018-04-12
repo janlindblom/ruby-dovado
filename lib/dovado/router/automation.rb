@@ -16,14 +16,14 @@ module Dovado
 
       # Create a new Automation object.
       def initialize
-        @list = {aliases: [], groups: []}
+        @list = { aliases: [], groups: [] }
       end
 
       # Turn a device on or off.
       #
       # @param [String] device alias of device.
       # @param [Symbol] on_off either +:on+ or +:off+.
-      def turn(device=nil, on_off=:on)
+      def turn(device = nil, on_off = :on)
         return if device.nil?
         direction = on_off == :on ? 'on' : 'off'
         client.command("ts turn #{device} #{direction}")
@@ -33,7 +33,7 @@ module Dovado
       #
       # @param [String] device alias of device.
       # @param [Integer] amount a value in the range +[0..100]+.
-      def dim(device=nil, amount=nil)
+      def dim(device = nil, amount = nil)
         return if device.nil? || amount.nil?
         client.command("ts dim #{device} #{amount}")
       end
@@ -42,7 +42,7 @@ module Dovado
       #
       # @param [String] device alias of device.
       # @param [Integer] amount a value in the range +[0..100]+.
-      def dims(device=nil, amount=nil)
+      def dims(device = nil, amount = nil)
         return if device.nil? || amount.nil?
         client.command("ts dims #{device} #{amount}")
       end
@@ -53,7 +53,7 @@ module Dovado
       # @param [Integer] start_level the starting level, a value in the range +[0..100]+.
       # @param [Integer] stop_level the stopping level, a value in the range +[0..100]+.
       # @param [Integer] duration the time duration over which to dim.
-      def dimot(device=nil, start_level=nil, stop_level=nil, duration=nil)
+      def dimot(device = nil, _start_level = nil, _stop_level = nil, _duration = nil)
         return if device.nil? || amount.nil?
         client.command("ts dims #{device} #{amount}")
       end
@@ -81,7 +81,7 @@ module Dovado
       #
       # @param [String] data_string +String+ with data from fetched from the router.
       # @api private
-      def create_from_string(list, data_string=nil)
+      def create_from_string(list, data_string = nil)
         data_array = data_string.split("\n")
         ao = nil
         go = nil
@@ -90,39 +90,34 @@ module Dovado
 
         data_array.each do |data_entry|
           entry_array = data_entry.split('=')
-          if entry_array.length == 2
-            key = entry_array[0].strip.downcase
-            val = entry_array[1].strip.match(/^\'(.*)\'$/)[1]
-            keysym = Utilities.name_to_sym(key)
-            if list == :aliases
-              if key.match(/alias/)
-                # state 1
-                unless ao.nil?
-                  @list[list] << ao
-                end
-                ao = Dovado::Router::Automation::Alias.new
-                ao.id = val
-              elsif key.match(/protocol/)
-                # state 2
-                ao.protocol = val
-              else
-                # state 3
-                ao.data[keysym] = val
-              end
-            elsif list == :groups
-              if key.match(/group_alias/)
-                # state 1
-                unless go.nil?
-                  @list[list] << go
-                end
-                go = Dovado::Router::Automation::Group.new
-                go.id = val
-              elsif key.match(/group_participants/)
-                # state 2
-                members = val.split('\ ')
-                members.each do |member|
-                  go.participants << find_alias(member)
-                end
+          next unless entry_array.length == 2
+          key = entry_array[0].strip.downcase
+          val = entry_array[1].strip.match(/^\'(.*)\'$/)[1]
+          keysym = Utilities.name_to_sym(key)
+          if list == :aliases
+            if key =~ /alias/
+              # state 1
+              @list[list] << ao unless ao.nil?
+              ao = Dovado::Router::Automation::Alias.new
+              ao.id = val
+            elsif key =~ /protocol/
+              # state 2
+              ao.protocol = val
+            else
+              # state 3
+              ao.data[keysym] = val
+            end
+          elsif list == :groups
+            if key =~ /group_alias/
+              # state 1
+              @list[list] << go unless go.nil?
+              go = Dovado::Router::Automation::Group.new
+              go.id = val
+            elsif key =~ /group_participants/
+              # state 2
+              members = val.split('\ ')
+              members.each do |member|
+                go.participants << find_alias(member)
               end
             end
           end
@@ -152,14 +147,14 @@ module Dovado
       #
       # @param [String] key the id of the {Alias} to find.
       def find_alias(key)
-        aliases.find{ |a| a.id == key }
+        aliases.find { |a| a.id == key }
       end
 
       # Find a specific {Group} object.
       #
       # @param [String] key the id of the {Group} to find.
       def find_group(key)
-        groups.find{ |g| g.id == key }
+        groups.find { |g| g.id == key }
       end
 
       # Checks if this {Automation} object is still valid.
@@ -174,7 +169,7 @@ module Dovado
       # @api private
       def self.setup_supervision!
         return supervise as: :home_automation, size: 1 unless Actor[:home_automation]
-        return supervise as: :home_automation, size: 1 if Actor[:home_automation] and Actor[:home_automation].dead?
+        return supervise as: :home_automation, size: 1 if Actor[:home_automation] && Actor[:home_automation].dead?
       end
 
       private

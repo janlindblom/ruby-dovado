@@ -17,7 +17,7 @@ module Dovado
         client = Actor[:client]
         client.connect unless client.connected?
         client.authenticate unless client.authenticated?
-        client.command("wifi on")
+        client.command('wifi on')
         status = :on
       end
 
@@ -26,7 +26,7 @@ module Dovado
         client = Actor[:client]
         client.connect unless client.connected?
         client.authenticate unless client.authenticated?
-        client.command("wifi off")
+        client.command('wifi off')
         status = :off
       end
 
@@ -61,7 +61,6 @@ module Dovado
       def self.setup_supervision!
         supervise as: :wifi, size: 1 unless Actor[:wifi]
       end
-
     end
   end
 end

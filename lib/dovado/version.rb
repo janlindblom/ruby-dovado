@@ -1,4 +1,4 @@
 module Dovado
   # Current version of the library.
-  VERSION = '1.0.5a'
+  VERSION = '1.0.5a'.freeze
 end

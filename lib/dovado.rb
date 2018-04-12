@@ -32,6 +32,6 @@ require 'dovado/router/sms'
 require 'dovado/router/sms/messages'
 require 'dovado/router/sms/message'
 
-require "dovado/router/automation/alias"
-require "dovado/router/automation/group"
-require "dovado/router/automation"
+require 'dovado/router/automation/alias'
+require 'dovado/router/automation/group'
+require 'dovado/router/automation'

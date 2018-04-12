@@ -6,7 +6,7 @@ module Dovado
         attr_accessor :protocol
         attr_accessor :data
 
-        def initialize(args=nil)
+        def initialize(args = nil)
           unless args.nil?
             @id = args[:id] if args.key? :id
             @protocol = args[:protocol] if args.key? :protocol
@@ -41,9 +41,7 @@ module Dovado
         # Checks if this {Alias} object is valid.
         #
         # @return [Boolean] +true+ or +false+.
-        def valid?
-
-        end
+        def valid?; end
 
         private
 
@@ -51,7 +49,6 @@ module Dovado
           Automation.setup_supervision!
           Actor[:home_automation]
         end
-
       end
     end
   end

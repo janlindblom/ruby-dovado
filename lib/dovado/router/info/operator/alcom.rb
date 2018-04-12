@@ -1,4 +1,4 @@
-require "thread_safe"
+require 'thread_safe'
 
 module Dovado
   class Router
@@ -8,16 +8,14 @@ module Dovado
         #
         # @since 1.0.5
         class Alcom < Operator
-
           # Create a new Ålcom Operator object.
           def initialize
             # PLANNING Add known commands and replies from Ålcom.
-            super(name: "Ålcom", number: "s12192", commands: {
+            super(name: 'Ålcom', number: 's12192', commands: {
               balance: 'saldo'.encode('UTF-8'),
               data_remaining: 'datamängd'.encode('UTF-8')
-              })
+            })
           end
-
         end
       end
     end

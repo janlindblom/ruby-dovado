@@ -114,14 +114,12 @@ module Dovado
       # Create a new {Info} object.
       #
       # @param [Hash] args optional hash to initialize with.
-      def initialize(args=nil)
+      def initialize(args = nil)
         # Defaults
         @data = ThreadSafe::Cache.new
 
         @last_update = nil
-        unless args.nil?
-          @data = args
-        end
+        @data = args unless args.nil?
       end
 
       # Update the data in this {Info} object.
@@ -132,7 +130,7 @@ module Dovado
         info = client.command('info')
         create_from_string info
       rescue ConnectionError => ex
-        #Actor[:client].terminate
+        # Actor[:client].terminate
         raise ex
       end
 
@@ -140,48 +138,45 @@ module Dovado
       #
       # @param [String] data_string router information string from the router.
       # @api private
-      def create_from_string(data_string=nil)
-        unless Actor[:sms]
-          Sms.supervise as: :sms, size: 1
-        end
+      def create_from_string(data_string = nil)
+        Sms.supervise as: :sms, size: 1 unless Actor[:sms]
         sms = Actor[:sms]
         data_array = data_string.split("\n")
         data_array.each do |data_entry|
           entry_array = data_entry.split('=')
-          if entry_array.length == 2
-            key = entry_array[0].downcase
-            val = entry_array[1]
-            keysym = Utilities.name_to_sym(key)
-            case key
-            when 'traffic_modem_tx', 'traffic_modem_rx'
-              @data[keysym] = val.strip.to_i
-            when 'time', 'sunset', 'sunrise'
-              # Catch an edge case
-              unless val.strip == "Unknown:Unknown"
-                @data[keysym] = Time.parse(val.strip)
-              end
-            when 'date'
-              @data[:date] = Date.parse(val.strip)
-            when 'sms_unread'
-              @data[:sms] = sms if @data[:sms].nil?
-              @data[:sms].unread = val.strip.to_i
-            when 'sms_total'
-              @data[:sms] = sms if @data[:sms].nil?
-              @data[:sms].total = val.strip.to_i
-            when 'connected_devices'
-              val = val.strip.split(',')
-              @data[keysym] = val
-            when 'gps_lat', 'gps_long'
-              @data[keysym] = val.to_f
-            when 'external_ip'
-              @data[keysym] = IPAddr.new val.strip
-            when 'signal_strength'
-              match = val.strip.match(/(\d+)\W\%\W(\-?\d+)\WdBm\W\((\d\w)\)/)
-              so = Info::Signal.new(strength: match[1], noise: match[2], network: match[3])
-              @data[keysym] = so
-            else
-              @data[keysym] = val.strip
+          next unless entry_array.length == 2
+          key = entry_array[0].downcase
+          val = entry_array[1]
+          keysym = Utilities.name_to_sym(key)
+          case key
+          when 'traffic_modem_tx', 'traffic_modem_rx'
+            @data[keysym] = val.strip.to_i
+          when 'time', 'sunset', 'sunrise'
+            # Catch an edge case
+            unless val.strip == 'Unknown:Unknown'
+              @data[keysym] = Time.parse(val.strip)
             end
+          when 'date'
+            @data[:date] = Date.parse(val.strip)
+          when 'sms_unread'
+            @data[:sms] = sms if @data[:sms].nil?
+            @data[:sms].unread = val.strip.to_i
+          when 'sms_total'
+            @data[:sms] = sms if @data[:sms].nil?
+            @data[:sms].total = val.strip.to_i
+          when 'connected_devices'
+            val = val.strip.split(',')
+            @data[keysym] = val
+          when 'gps_lat', 'gps_long'
+            @data[keysym] = val.to_f
+          when 'external_ip'
+            @data[keysym] = IPAddr.new val.strip
+          when 'signal_strength'
+            match = val.strip.match(/(\d+)\W\%\W(\-?\d+)\WdBm\W\((\d\w)\)/)
+            so = Info::Signal.new(strength: match[1], noise: match[2], network: match[3])
+            @data[keysym] = so
+          else
+            @data[keysym] = val.strip
           end
         end
         touch!
@@ -284,7 +279,7 @@ module Dovado
       # @api private
       def self.setup_supervision!
         return supervise as: :router_info, size: 1 unless Actor[:router_info]
-        return supervise as: :router_info, size: 1 if Actor[:router_info] and Actor[:router_info].dead?
+        return supervise as: :router_info, size: 1 if Actor[:router_info] && Actor[:router_info].dead?
       end
 
       private
@@ -297,7 +292,6 @@ module Dovado
       def touch!
         @last_update = Time.now.to_i
       end
-
     end
   end
 end

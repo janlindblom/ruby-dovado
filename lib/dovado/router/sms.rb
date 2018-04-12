@@ -1,7 +1,7 @@
 module Dovado
   class Router
     # Text messages.
-    # 
+    #
     # @since 1.0.0
     class Sms
       # PLANNING issue:8 Enable creating and sending text messages.
@@ -25,7 +25,7 @@ module Dovado
       # @param [Hash] args optional arguments.
       # @option args [Integer] :unread number of unread messages
       # @option args [Integer] :total total number of messages
-      def initialize(args=nil)
+      def initialize(args = nil)
         Messages.supervise as: :messages, size: 1
         messages = Actor[:messages]
         @enabled = false
@@ -55,7 +55,7 @@ module Dovado
       # Assign number of read messages.
       #
       # @param [Integer] read Number of read messages.
-      def read=(read=nil)
+      def read=(read = nil)
         @unread = (@total - read) unless read.nil?
       end
 
@@ -65,22 +65,20 @@ module Dovado
       # @param [String] data_string String with text message data from the
       # router.
       # @api private
-      def create_from_string(data_string=nil)
+      def create_from_string(data_string = nil)
         data_array = data_string.split("\n")
         data_array.each do |data_entry|
           entry_array = data_entry.split(':')
-          if entry_array.length == 2
-            key = entry_array[0].downcase
-            val = entry_array[1]
-            if key.downcase.tr(' ', '_') == 'stored_ids'
-              idlist = val.split(' ')
-              idlist.each do |id|
-                @ids << id
-              end
-            end
+          next unless entry_array.length == 2
+          key = entry_array[0].downcase
+          val = entry_array[1]
+          next unless key.downcase.tr(' ', '_') == 'stored_ids'
+          idlist = val.split(' ')
+          idlist.each do |id|
+            @ids << id
           end
         end
-        @ids.map! { |id| id.to_i }.sort!
+        @ids.map!(&:to_i).sort!
       end
 
       # Load text messages.
@@ -97,7 +95,6 @@ module Dovado
       def self.setup_supervision!
         supervise as: :sms, size: 1 unless Actor[:sms]
       end
-
     end
   end
 end

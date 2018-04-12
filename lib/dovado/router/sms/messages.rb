@@ -4,7 +4,7 @@ module Dovado
   class Router
     class Sms
       # Text messages.
-      # 
+      #
       # @since 1.0.0
       class Messages
         include Celluloid
@@ -21,7 +21,7 @@ module Dovado
         end
 
         # Fetch a {Message} from the cache.
-        # 
+        #
         # @param [String,Integer,Symbol] id Id of the message.
         # @return [Message] message object.
         # @see {Message}
@@ -36,7 +36,6 @@ module Dovado
         def ids
           @messages.keys
         end
-
       end
     end
   end
